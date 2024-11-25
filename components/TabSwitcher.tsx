@@ -5,8 +5,8 @@ import { ThemedText } from "./ThemedText";
 type TabSwitcherProps = {
   tab1: string,
   tab2: string,
-  onTab1Click: any,
-  onTab2Click: any,
+  onTab1Click?: any,
+  onTab2Click?: any,
 };
 
 export default function TabSwitcher({tab1, tab2, onTab1Click, onTab2Click}: TabSwitcherProps) {

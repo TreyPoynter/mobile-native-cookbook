@@ -7,7 +7,6 @@ import TabSwitcher from '@/components/TabSwitcher';
 export default function Add() {
 
 
-
   return (
     <View style={styles.container}>
       {/* Image and Gradient */}
