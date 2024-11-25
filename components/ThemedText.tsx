@@ -18,7 +18,7 @@ export function ThemedText({
   let color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
   if(!darkColor && !lightColor)
-    color = '#000'
+    color = '#0A2533'
 
   return (
     <Text
