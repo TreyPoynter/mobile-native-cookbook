@@ -1,9 +1,11 @@
-import { Text } from "react-native"
+import { StyleSheet, View } from 'react-native';
+import { ThemedText } from '@/components/ThemedText';
 
 export default function Manage() {
-  return(
-    <>
-      <Text style={{color: 'white'}}>HI</Text>
-    </>
-  )
+
+  return (
+    <View>
+      <ThemedText>MANAGE</ThemedText>
+    </View>
+  );
 }

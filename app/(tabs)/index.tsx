@@ -5,7 +5,7 @@ export default function HomeScreen() {
 
   return (
     <View>
-      <ThemedText>HELLO</ThemedText>
+      <ThemedText>HOME PAGE</ThemedText>
     </View>
   );
 }
