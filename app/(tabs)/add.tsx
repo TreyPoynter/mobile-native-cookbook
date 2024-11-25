@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Image, ScrollView, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ThemedText } from '@/components/ThemedText';
+import ThemedTextbox from '@/components/ThemedTextbox';
+import TabSwitcher from '@/components/TabSwitcher';
 
-export default function Manage() {
+export default function Add() {
+
+
+
   return (
     <View style={styles.container}>
       {/* Image and Gradient */}
@@ -21,7 +25,8 @@ export default function Manage() {
       {/* Scrollable Module */}
       <View style={styles.scrollableModuleContainer}>
         <ScrollView contentContainerStyle={styles.scrollableContent}>
-
+          <ThemedTextbox placeholder='Recipe Title'/>
+          <TabSwitcher tab1='Ingredients' tab2='Instructions'/>
         </ScrollView>
       </View>
     </View>
