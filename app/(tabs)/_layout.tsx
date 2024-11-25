@@ -34,9 +34,9 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="manage"
+          name="add"
           options={{
-            title: 'Manage',
+            title: 'Add',
             tabBarIcon: () => null, // No default icon for this tab
             tabBarButton: (props) => <FloatingTabButton {...props} />,
           }}
