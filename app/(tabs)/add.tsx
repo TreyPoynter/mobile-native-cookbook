@@ -16,7 +16,8 @@ const timeSelections = [
 export default function Add() {
 
   const [recipeName, setRecipeName] = useState('');
-  const [recipeTime, setRecipeTime] = useState({amount: 1, unit: ''});
+  const [recipeTime, setRecipeTime] = useState(0);
+  const [recipeTimeUnits, setRecipeTimeUnits] = useState('');
 
   const [selectedTab, setSelectedTab] = useState("Ingredients");
 
@@ -32,10 +33,9 @@ export default function Add() {
     }
   };
 
-  const handleTimeChange = (value: { amount: number; unit: 'minutes' |'hours' | 'days' }) => {
-    setRecipeTime(value);
-    console.log(recipeTime);
-  };
+  useEffect(() => {
+    console.log(`${recipeTime} - ${recipeTimeUnits}`)
+  }, [recipeTime, recipeTimeUnits])
 
   return (
     <View style={styles.container}>
@@ -55,8 +55,9 @@ export default function Add() {
         <ScrollView contentContainerStyle={styles.scrollableContent}>
           <ThemedTextbox placeholder='Recipe Title' onTextChange={setRecipeName}/>
           <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-between'}}>
-            <ThemedDropdown data={Array.from({ length: 60 }, (_, i) => ({ value: (i + 1).toString(), label: (i + 1).toString() }))} fa6Icon={'clock'} style={{width: '49%'}}/>
-            <ThemedDropdown data={timeSelections} fa6Icon={'ruler-horizontal'} style={{width: '49%'}}/>
+            <ThemedDropdown data={Array.from({ length: 60 }, (_, i) => ({ value: (i + 1).toString(), label: (i + 1).toString() }))} 
+              fa6Icon={'clock'} style={{width: '49%'}} onChange={setRecipeTime}/>
+            <ThemedDropdown data={timeSelections} fa6Icon={'ruler-horizontal'} style={{width: '49%'}} onChange={setRecipeTimeUnits}/>
           </View>
           
           <View>

@@ -1,7 +1,11 @@
 import { ThemedText } from "@/components/ThemedText";
+import { View } from "react-native";
+import IngredientCard from "../IngredientCard";
 
 export default function AddIngredients() {
   return(
-    <ThemedText>Ingredients</ThemedText>
+    <View>
+      <IngredientCard/>
+    </View>
   );
 }

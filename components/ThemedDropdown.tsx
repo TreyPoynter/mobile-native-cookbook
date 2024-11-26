@@ -9,9 +9,10 @@ import React, { useState } from 'react';
     dropdownLabel?: string,
     fa6Icon?: any,
     focusColor?: string,
-    style?: any
+    style?: any,
+    onChange?: any
   } 
-export default function ThemedDropdown({data, placeholder, dropdownLabel, fa6Icon, focusColor, style}:ThemedDropdownProps){
+export default function ThemedDropdown({data, placeholder, dropdownLabel, fa6Icon, focusColor, style, onChange}:ThemedDropdownProps){
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
@@ -19,7 +20,7 @@ export default function ThemedDropdown({data, placeholder, dropdownLabel, fa6Ico
       if ((value || isFocus) && dropdownLabel) {
         return (
           <Text style={[dropdownStyles.label, isFocus && { color: focusColor ?? '#000' }]}>
-            Dropdown label
+            {dropdownLabel}
           </Text>
         );
       }
@@ -44,6 +45,7 @@ export default function ThemedDropdown({data, placeholder, dropdownLabel, fa6Ico
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
+            onChange(item.value);
             setValue(item.value);
             setIsFocus(false);
           }}
