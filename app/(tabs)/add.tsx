@@ -3,13 +3,26 @@ import { StyleSheet, View, Image, ScrollView, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ThemedTextbox from '@/components/ThemedTextbox';
 import TabSwitcher from '@/components/TabSwitcher';
+import AddIngredients from '../../components/ui/addIngredients';
+import AddInstructions from '../../components/ui/addInstructions';
 
 export default function Add() {
 
+  const [selectedTab, setSelectedTab] = useState("Ingredients");
+
+  const renderTabContent = () => {
+    switch (selectedTab) {
+      case "Ingredients":
+        return <AddIngredients />;
+      case "Instructions":
+        return <AddInstructions />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {/* Image and Gradient */}
       <View>
         <LinearGradient
           colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']}
@@ -24,8 +37,11 @@ export default function Add() {
       {/* Scrollable Module */}
       <View style={styles.scrollableModuleContainer}>
         <ScrollView contentContainerStyle={styles.scrollableContent}>
-          <ThemedTextbox placeholder='Recipe Title'/>
-          <TabSwitcher tab1='Ingredients' tab2='Instructions'/>
+          <ThemedTextbox placeholder='Recipe Title' />
+          <TabSwitcher tab1='Ingredients' tab2='Instructions' onTab1Click={() => setSelectedTab('Ingredients')} onTab2Click={() => setSelectedTab('Instructions')}/>
+          {
+            renderTabContent()
+          }
         </ScrollView>
       </View>
     </View>
