@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Image, ScrollView, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ThemedTextbox from '@/components/ThemedTextbox';
 import TabSwitcher from '@/components/TabSwitcher';
 import AddIngredients from '../../components/ui/addIngredients';
 import AddInstructions from '../../components/ui/addInstructions';
+import ThemedDropdown from '@/components/ThemedDropdown';
+
+const timeSelections = [
+  { label: 'Minutes', value: 'Minutes' },
+  { label: 'Hours', value: 'Hours' },
+  { label: 'Days', value: 'Days' },
+];
 
 export default function Add() {
+
+  const [recipeName, setRecipeName] = useState('');
+  const [recipeTime, setRecipeTime] = useState({amount: 1, unit: ''});
 
   const [selectedTab, setSelectedTab] = useState("Ingredients");
 
@@ -16,9 +26,15 @@ export default function Add() {
         return <AddIngredients />;
       case "Instructions":
         return <AddInstructions />;
-      default:
-        return null;
+      default:  // in case the values get tampered with somehow
+        setSelectedTab('Ingredients');
+        return <AddIngredients />;
     }
+  };
+
+  const handleTimeChange = (value: { amount: number; unit: 'minutes' |'hours' | 'days' }) => {
+    setRecipeTime(value);
+    console.log(recipeTime);
   };
 
   return (
@@ -37,11 +53,19 @@ export default function Add() {
       {/* Scrollable Module */}
       <View style={styles.scrollableModuleContainer}>
         <ScrollView contentContainerStyle={styles.scrollableContent}>
-          <ThemedTextbox placeholder='Recipe Title' />
-          <TabSwitcher tab1='Ingredients' tab2='Instructions' onTab1Click={() => setSelectedTab('Ingredients')} onTab2Click={() => setSelectedTab('Instructions')}/>
-          {
-            renderTabContent()
-          }
+          <ThemedTextbox placeholder='Recipe Title' onTextChange={setRecipeName}/>
+          <View style={{flexDirection: 'row', width: '100%', justifyContent: 'space-between'}}>
+            <ThemedDropdown data={Array.from({ length: 60 }, (_, i) => ({ value: (i + 1).toString(), label: (i + 1).toString() }))} fa6Icon={'clock'} style={{width: '49%'}}/>
+            <ThemedDropdown data={timeSelections} fa6Icon={'ruler-horizontal'} style={{width: '49%'}}/>
+          </View>
+          
+          <View>
+            <TabSwitcher tab1='Ingredients' tab2='Instructions' onTab1Click={() => setSelectedTab('Ingredients')} onTab2Click={() => setSelectedTab('Instructions')} />
+            {
+              renderTabContent()
+            }
+          </View>
+
         </ScrollView>
       </View>
     </View>
@@ -79,7 +103,8 @@ const styles = StyleSheet.create({
   },
   scrollableContent: {
     padding: 20,
-    flex: 1
+    display: 'flex',
+    gap: 8
   },
   textContent: {
     fontSize: 16,
