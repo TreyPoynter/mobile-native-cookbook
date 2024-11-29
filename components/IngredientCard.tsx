@@ -1,7 +1,11 @@
 import { View, StyleSheet } from "react-native";
-import ThemedTextbox from "./ThemedTextbox";
 
-export default function IngredientCard() {
+type IngredientCardProps = {
+  ingredientName: string,
+  calories?: number
+}
+
+export default function IngredientCard({ingredientName, calories = 0}: IngredientCardProps) {
   return(
     <View>
       
