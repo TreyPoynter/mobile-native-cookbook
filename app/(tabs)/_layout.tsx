@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: '#fff',
     position: Platform.OS === 'ios' ? 'absolute' : 'relative',
-    height: 80,
+    height: 60,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingBottom: Platform.OS === 'ios' ? 20 : 0,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   },
   floatingTab: {
     position: 'absolute',
-    bottom: 20, // Adjust to match the navbar height
+    bottom: 10, // Adjust to match the navbar height
     left: '50%',
     transform: [{ translateX: -36 }], // Center the floating tab
     backgroundColor: '#fff',
