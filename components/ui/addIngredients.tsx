@@ -3,6 +3,7 @@ import IngredientCard from "../IngredientCard";
 import { FontAwesome6 } from "@expo/vector-icons";
 import React from "react";
 import { NewIngredient } from "@/app/(tabs)/add";
+import * as SQLite from 'expo-sqlite';
 
 type AddIngredientsPageProps = {
   ingredientsArr: NewIngredient[],
