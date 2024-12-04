@@ -1,62 +1,53 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { ThemedDropdownProps } from './ThemedDropdown';
 
-export type ThemedDropdownProps = {
-  data: any[]
-  placeholder?: string,
-  dropdownLabel?: string,
-  fa6Icon?: any,
-  focusColor?: string,
-  style?: any,
-  onChange?: any
-}
-export default function ThemedDropdown({ data, placeholder, dropdownLabel, fa6Icon, focusColor, style, onChange }: ThemedDropdownProps) {
-  const [value, setValue] = useState(null);
+const data = [
+  { label: 'Item 1', value: '1' },
+  { label: 'Item 2', value: '2' },
+  { label: 'Item 3', value: '3' },
+  { label: 'Item 4', value: '4' },
+  { label: 'Item 5', value: '5' },
+  { label: 'Item 6', value: '6' },
+  { label: 'Item 7', value: '7' },
+  { label: 'Item 8', value: '8' },
+];
+
+export default function ThemedSearchDropdown(props: ThemedDropdownProps) {
+  const [value, setValue] = useState<string>('');
   const [isFocus, setIsFocus] = useState(false);
 
-  const renderLabel = () => {
-    if ((value || isFocus) && dropdownLabel) {
-      return (
-        <Text style={[dropdownStyles.label, isFocus && { color: focusColor ?? '#000' }]}>
-          {dropdownLabel}
-        </Text>
-      );
-    }
-    return null;
-  };
-
   return (
-    <View style={style}>
-      {renderLabel()}
+    <View style={dropdownStyles.container}>
       <Dropdown
-        style={[dropdownStyles.dropdown, isFocus && { borderColor: focusColor }]}
+        style={[dropdownStyles.dropdown, isFocus && { borderColor: props.focusColor }]}
         placeholderStyle={dropdownStyles.placeholderStyle}
         selectedTextStyle={dropdownStyles.selectedTextStyle}
         inputSearchStyle={dropdownStyles.inputSearchStyle}
         iconStyle={dropdownStyles.iconStyle}
         data={data}
+        search
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder={!isFocus ? placeholder : '...'}
+        placeholder={!isFocus ? 'Select Ingredient' : '...'}
+        searchPlaceholder="Search Ingredient..."
         value={value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={item => {
-          onChange(item.value);
           setValue(item.value);
           setIsFocus(false);
         }}
         renderLeftIcon={() => (
-          fa6Icon && (
-            <FontAwesome6
-              style={dropdownStyles.icon}
-              color={isFocus ? focusColor : '#7c8990'}
-              name={fa6Icon}
-              size={20}
-            />)
+          <AntDesign
+            style={dropdownStyles.icon}
+            color={isFocus ? props.focusColor : '#7c8990'}
+            name="Safety"
+            size={20}
+          />
         )}
       />
     </View>
@@ -64,7 +55,10 @@ export default function ThemedDropdown({ data, placeholder, dropdownLabel, fa6Ic
 };
 
 const dropdownStyles = StyleSheet.create({
-
+  container: {
+    backgroundColor: 'white',
+    marginBottom: 8
+  },
   dropdown: {
     height: 50,
     borderColor: '#E6EBF2',
@@ -77,7 +71,6 @@ const dropdownStyles = StyleSheet.create({
   },
   label: {
     position: 'absolute',
-    color: '#000',
     backgroundColor: 'white',
     left: 22,
     top: 8,

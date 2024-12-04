@@ -3,6 +3,7 @@ import IngredientCard from "../IngredientCard";
 import { FontAwesome6 } from "@expo/vector-icons";
 import React from "react";
 import { NewIngredient } from "@/app/(tabs)/add";
+import readIngredients from "@/ts/readIngredients";
 
 type AddIngredientsPageProps = {
   ingredientsArr: NewIngredient[],
@@ -31,7 +32,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
   }
 
   const renderItem = (props: NewIngredient) => {
-    return <IngredientCard ingredientName={props.name} onIngredientDelete={() => removeIngredient(props.id)} />;
+    return <IngredientCard ingredients={readIngredients} ingredientName={props.name} onIngredientDelete={() => removeIngredient(props.id)} />;
   }
 
 
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start'
   },
   listContainer: {
-    height: 140,
+    height: 180,
   },
   addButtonContainer: {
     alignItems: 'center'

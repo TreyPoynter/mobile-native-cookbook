@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   scrollableModuleContainer: {
     position: 'absolute',
-    top: 250, // adjust to set the position of the scrollable content
+    top: 200, // adjust to set the position of the scrollable content
     left: 0,
     right: 0,
     bottom: 0,
