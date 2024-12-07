@@ -7,7 +7,7 @@ import { ThemedDropdownProps } from "./ThemedDropdown";
 export default function ThemedSearchDropdown(props: ThemedDropdownProps) {
   const [value, setValue] = useState<string>("");
   const [isFocus, setIsFocus] = useState(false);
-  const [data, setData] = useState<any>([]);
+  const [data, setData] = useState<{label: any, value: any}[]>([]);
   
 
   useEffect(() => {
