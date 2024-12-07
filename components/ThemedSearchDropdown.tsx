@@ -34,6 +34,7 @@ export default function ThemedSearchDropdown(props: ThemedDropdownProps) {
         onBlur={() => setIsFocus(false)}
         onChange={(item) => {
           setValue(item.value);
+          props.onChange(item.label);
           setIsFocus(false);
         }}
         renderLeftIcon={() => (

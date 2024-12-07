@@ -49,7 +49,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
 
   const renderItem = (props: NewIngredient) => {
     return (
-      <ThemedSearchDropdown data={}/>
+      <ThemedSearchDropdown data={ingredientDropdownData} onChange={() => console.log('CHANGE ME LATER PLEASE')}/>
     );
   }
 
