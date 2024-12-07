@@ -21,7 +21,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
     }
 
     setIngredientsHook();
-  }, [])
+  }, []);
 
   function addIngredient() {
     const newIngredientCard: NewIngredient = {

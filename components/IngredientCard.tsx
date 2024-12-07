@@ -2,7 +2,7 @@ import { View, StyleSheet, Text } from "react-native";
 import ThemedSearchDropdown from "./ThemedSearchDropdown";
 
 type IngredientCardProps = {
-  ingredients: () => Promise<void>,
+  ingredients: () => Promise<any[]>,
   ingredientName: string,
   calories?: number,
   onIngredientDelete: (id: number) => void
