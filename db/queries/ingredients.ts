@@ -4,7 +4,7 @@ export async function getIngredients() {
   try {
     const db = await SQLite.openDatabaseAsync('ingredients.db');
 
-    const allRows = await db.getAllAsync('SELECT * FROM ingredients ORDER BY name');
+    const allRows = await db.getAllAsync('SELECT * FROM Ingredients ORDER BY name');
     console.log(allRows);
     return allRows;
   } catch (error) {
