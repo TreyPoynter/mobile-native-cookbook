@@ -16,8 +16,8 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
 
   useEffect(() => {
     async function setIngredientsHook() {
-      const iArr = await getIngredients();
-      const formattedData = iArr?.map((item : any) => ({
+      const ingredients = await getIngredients() ?? [];
+      const formattedData = ingredients.map((item : any) => ({  // so the themed dropdown can search it
         label: item.name,
         value: item.id,
       }));
@@ -47,7 +47,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
     });
   }
 
-  const renderItem = (props: NewIngredient) => {
+  const renderItem = () => {
     return (
       <ThemedSearchDropdown data={ingredientDropdownData} onChange={() => console.log('CHANGE ME LATER PLEASE')}/>
     );
