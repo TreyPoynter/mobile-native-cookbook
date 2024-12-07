@@ -1,8 +1,9 @@
 import { TouchableOpacity, View, StyleSheet, FlatList } from "react-native";
 import IngredientCard from "../IngredientCard";
 import { FontAwesome6 } from "@expo/vector-icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NewIngredient } from "@/app/(tabs)/add";
+import { getIngredients } from "@/db/queries/ingredients";
 
 type AddIngredientsPageProps = {
   ingredientsArr: NewIngredient[],
@@ -10,6 +11,17 @@ type AddIngredientsPageProps = {
 }
 
 export default function AddIngredients({ ingredientsArr, setIngredientsArr }: AddIngredientsPageProps) {
+
+  const [ingredients, setIngredients] = useState<any>([]);
+
+  useEffect(() => {
+    async function setIngredientsHook() {
+      const iArr = await getIngredients();
+      setIngredients(iArr);
+    }
+
+    setIngredientsHook();
+  }, [])
 
   function addIngredient() {
     const newIngredientCard: NewIngredient = {
@@ -31,7 +43,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
   }
 
   const renderItem = (props: NewIngredient) => {
-    return <IngredientCard ingredientName={props.name} onIngredientDelete={() => removeIngredient(props.id)} />;
+    return <IngredientCard ingredients={ingredients} ingredientName={props.name} onIngredientDelete={() => removeIngredient(props.id)} />;
   }
 
 
