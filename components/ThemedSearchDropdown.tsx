@@ -11,12 +11,8 @@ export default function ThemedSearchDropdown(props: ThemedDropdownProps) {
   
 
   useEffect(() => {
-    const formattedData = props.data.map((item) => ({
-      label: item.name,
-      value: item.id,
-    }));
-    setData(formattedData)
-  }, [])
+    setData(props.data);
+  }, []);
 
   return (
     <View style={dropdownStyles.container}>
