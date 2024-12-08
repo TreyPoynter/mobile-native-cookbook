@@ -11,8 +11,9 @@ export type Ingredient = {
   name: string,
   calories: number
 }
-export type NewIngredient = Ingredient & {
+export type NewIngredient  = {
   id: number
+  value?: number | null
 }
 
 const timeSelections = [

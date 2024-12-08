@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { ThemedDropdownProps } from "./ThemedDropdown";
 
 export default function ThemedSearchDropdown(props: ThemedDropdownProps) {
@@ -34,17 +34,9 @@ export default function ThemedSearchDropdown(props: ThemedDropdownProps) {
         onBlur={() => setIsFocus(false)}
         onChange={(item) => {
           setValue(item.value);
-          props.onChange(item.label);
+          props.onChange(item.value);
           setIsFocus(false);
         }}
-        renderLeftIcon={() => (
-          <AntDesign
-            style={dropdownStyles.icon}
-            color={isFocus ? props.focusColor : "#7c8990"}
-            name="Safety"
-            size={20}
-          />
-        )}
       />
     </View>
   );

@@ -17,7 +17,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
   useEffect(() => {
     async function setIngredientsHook() {
       const ingredients = await getIngredients() ?? [];
-      const formattedData = ingredients.map((item : any) => ({  // so the themed dropdown can search it
+      const formattedData = ingredients.map((item: any) => ({  // so the themed dropdown can search it
         label: item.name,
         value: item.id,
       }));
@@ -31,8 +31,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
   function addIngredient() {
     const newIngredientCard: NewIngredient = {
       id: ingredientsArr.length,
-      name: '',
-      calories: 0
+      value: null
     };
     // create a new array reference
     setIngredientsArr([...ingredientsArr, newIngredientCard]);
@@ -47,9 +46,20 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
     });
   }
 
-  const renderItem = () => {
+  function changeIngredient(itemId: number, value: number) {
+    setIngredientsArr(prevArr =>
+      prevArr.map(ingredient =>
+        ingredient.id === itemId
+          ? { ...ingredient, value } // Update the value if IDs match
+          : ingredient // Otherwise, keep the ingredient unchanged
+      )
+    );
+  }
+
+  const renderItem = ({ item }: any) => {
+    console.log(item)
     return (
-      <ThemedSearchDropdown data={ingredientDropdownData} onChange={() => console.log('CHANGE ME LATER PLEASE')}/>
+      <ThemedSearchDropdown id={item.id} data={ingredientDropdownData} onChange={(value) => changeIngredient(item.id, value)} />
     );
   }
 

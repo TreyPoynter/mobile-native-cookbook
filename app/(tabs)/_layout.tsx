@@ -52,7 +52,7 @@ export default function TabLayout() {
           name="profile"
           options={{
             title: 'Profile',
-            tabBarIcon: ({ color }) => <FontAwesome6 name="user-large" size={24} color={color} />,
+            tabBarIcon: ({ color }) => <FontAwesome6 name="calendar-days" size={24} color={color} />,
           }}
         />
       </Tabs>
