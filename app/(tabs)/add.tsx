@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Image, ScrollView, Text } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ThemedTextbox from '@/components/ThemedTextbox';
 import TabSwitcher from '@/components/TabSwitcher';
@@ -14,7 +14,8 @@ export type Ingredient = {
 }
 export type NewIngredient = {
   id: number
-  value?: number | null
+  value?: number | null,
+  name?: string | null,
 }
 
 const timeSelections = [
@@ -43,7 +44,6 @@ export default function Add() {
       }));
       setIngredientDropdownData(formattedData);
     }
-
 
     setIngredientsHook();
   }, []);

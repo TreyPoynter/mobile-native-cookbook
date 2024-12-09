@@ -10,8 +10,9 @@ export type ThemedDropdownProps = {
   fa6Icon?: any,
   focusColor?: string,
   style?: any,
-  id?: number
-  onChange: (changedValue: any) => any
+  id?: number,
+  onChange: (changedValue: any) => any,
+  
 }
 export default function ThemedDropdown({ data, placeholder, dropdownLabel, fa6Icon, focusColor, style, onChange }: ThemedDropdownProps) {
   const [value, setValue] = useState(null);

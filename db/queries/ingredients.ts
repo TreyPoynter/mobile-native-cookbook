@@ -24,6 +24,16 @@ export async function getIngredientsByKeywords(keyword: string) {
     console.log(error)
     return [];
   }
-  
+}
 
+export async function getIngredientById(id: number) {
+  try {
+    const db = await SQLite.openDatabaseAsync(dbName);
+
+    const result = await db.getAllAsync(`SELECT id, name FROM Ingredients WHERE id = ${id}`);
+    return result[0];
+  } catch (error) {
+    console.log(error)
+    return null;
+  }
 }

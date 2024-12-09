@@ -14,6 +14,17 @@ export default function ThemedSearchDropdown(props: ThemedDropdownProps) {
     setData(props.data);
   }, []);
 
+  const renderLabel = () => {
+    if ((value || isFocus) && props.dropdownLabel) {
+      return (
+        <Text style={[dropdownStyles.label, isFocus && { color: props.focusColor ?? '#000' }]}>
+          {props.dropdownLabel}
+        </Text>
+      );
+    }
+    return null;
+  };
+
   return (
     <View style={dropdownStyles.container}>
       <Dropdown
@@ -27,7 +38,7 @@ export default function ThemedSearchDropdown(props: ThemedDropdownProps) {
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder={!isFocus ? "Select Ingredient" : "..."}
+        placeholder={props.dropdownLabel ?? "Select Ingredient"}
         searchPlaceholder="Search Ingredient..."
         value={value}
         onFocus={() => setIsFocus(true)}

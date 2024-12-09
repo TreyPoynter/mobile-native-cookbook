@@ -3,6 +3,7 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { NewIngredient } from "@/app/(tabs)/add";
 import ThemedSearchDropdown from "../ThemedSearchDropdown";
+import { getIngredientById } from "@/db/queries/ingredients";
 
 type AddIngredientsPageProps = {
   ingredientsArr: NewIngredient[],
@@ -13,13 +14,11 @@ type AddIngredientsPageProps = {
 }
 
 export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingredientDropDownData, currCount, setCurrCount }: AddIngredientsPageProps) {
-
-  
-
   function addIngredient() {
     const newIngredientCard: NewIngredient = {
       id: currCount,
-      value: null
+      value: null,
+      name: null
     };
     setCurrCount(value => ++value);
     // create a new array reference
@@ -32,23 +31,29 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingre
     setIngredientsArr(newArr);
   }
 
-  function changeIngredient(itemId: number, value: number) {
+  async function changeIngredient(itemId: number, value: number) {
+    // Fetch the name asynchronously
+    const ingName = await getIngredientById(value);
+  
+    // Update the state with the new value and name
     setIngredientsArr(prevArr =>
       prevArr.map(ingredient =>
         ingredient.id === itemId
-          ? { ...ingredient, value } // Update the value if IDs match
-          : ingredient // Otherwise, keep the ingredient unchanged
+          ? { ...ingredient, value, name: ingName.name } // Update both value and name
+          : ingredient
       )
     );
   }
+  
 
   const renderItem = ({ item }: any) => {
+    console.log(item)
     return (
       <View style={styles.ingredientCardContainer}>
         <TouchableOpacity onPress={() => removeIngredient(item.id)} activeOpacity={0.2} style={styles.removeButton}>
           <FontAwesome6 name="circle-xmark" size={23} color="#042628" />
         </TouchableOpacity>
-        <ThemedSearchDropdown id={item.id} data={ingredientDropDownData} onChange={(value) => changeIngredient(item.id, value)} />
+        <ThemedSearchDropdown id={item.id} data={ingredientDropDownData} onChange={(value) => changeIngredient(item.id, value)} dropdownLabel={item.name}/>
       </View>
     );
   }
