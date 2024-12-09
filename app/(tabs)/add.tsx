@@ -6,12 +6,13 @@ import TabSwitcher from '@/components/TabSwitcher';
 import AddIngredients from '../../components/ui/addIngredients';
 import AddInstructions from '../../components/ui/addInstructions';
 import ThemedDropdown from '@/components/ThemedDropdown';
+import { getIngredients } from '@/db/queries/ingredients';
 
 export type Ingredient = {
   name: string,
   calories: number
 }
-export type NewIngredient  = {
+export type NewIngredient = {
   id: number
   value?: number | null
 }
@@ -30,16 +31,34 @@ export default function Add() {
   const [ingredients, setIngredients] = useState<NewIngredient[]>([]);
 
   const [selectedTab, setSelectedTab] = useState("Ingredients");
+  const [ingredientDropdownData, setIngredientDropdownData] = useState<any>([]);
+  const [currIngredientCount, setCurrIngredientCount] = useState(0);
+
+  useEffect(() => {
+    async function setIngredientsHook() {
+      const ingredientsDbData = await getIngredients() ?? [];
+      const formattedData = ingredientsDbData.map((item: any) => ({  // so the themed dropdown can render/search it
+        label: item.name,
+        value: item.id,
+      }));
+      setIngredientDropdownData(formattedData);
+    }
+
+
+    setIngredientsHook();
+  }, []);
 
   const renderTabContent = () => {
     switch (selectedTab) {
       case "Ingredients":
-        return <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients} />;
+        return <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients}
+          ingredientDropDownData={ingredientDropdownData} currCount={currIngredientCount} setCurrCount={setCurrIngredientCount} />;
       case "Instructions":
         return <AddInstructions />;
       default:  // in case the values get tampered with somehow
         setSelectedTab('Ingredients');
-        return <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients} />;
+        return <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients}
+          ingredientDropDownData={ingredientDropdownData} currCount={currIngredientCount} setCurrCount={setCurrIngredientCount} />;
     }
   };
 
@@ -65,7 +84,7 @@ export default function Add() {
             <ThemedDropdown data={timeSelections} fa6Icon={'ruler-horizontal'} style={{ width: '49%' }} onChange={setRecipeTimeUnits} />
           </View>
 
-          <View>
+          <View style={{ overflow: 'visible' }}>
             <TabSwitcher tab1='Ingredients' tab2='Instructions' onTab1Click={() => setSelectedTab('Ingredients')} onTab2Click={() => setSelectedTab('Instructions')} />
             {
               renderTabContent()
@@ -81,6 +100,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    overflow: 'visible',
   },
   gradient: {
     position: 'absolute',
@@ -104,12 +124,13 @@ const styles = StyleSheet.create({
     zIndex: 2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    overflow: 'hidden',
+    overflow: 'visible',
   },
   scrollableContent: {
     padding: 20,
     display: 'flex',
-    gap: 8
+    gap: 8,
+    overflow: 'visible'
   },
   textContent: {
     fontSize: 16,

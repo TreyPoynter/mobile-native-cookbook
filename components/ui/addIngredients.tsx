@@ -1,49 +1,35 @@
 import { TouchableOpacity, View, StyleSheet, FlatList } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { NewIngredient } from "@/app/(tabs)/add";
-import { getIngredients } from "@/db/queries/ingredients";
 import ThemedSearchDropdown from "../ThemedSearchDropdown";
 
 type AddIngredientsPageProps = {
   ingredientsArr: NewIngredient[],
-  setIngredientsArr: React.Dispatch<React.SetStateAction<NewIngredient[]>>
+  setIngredientsArr: React.Dispatch<React.SetStateAction<NewIngredient[]>>,
+  ingredientDropDownData: any,
+  currCount: number,
+  setCurrCount: React.Dispatch<React.SetStateAction<number>>,
 }
 
-export default function AddIngredients({ ingredientsArr, setIngredientsArr }: AddIngredientsPageProps) {
+export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingredientDropDownData, currCount, setCurrCount }: AddIngredientsPageProps) {
 
-  const [ingredientDropdownData, setIngredientDropdownData] = useState<any>([]);
-
-  useEffect(() => {
-    async function setIngredientsHook() {
-      const ingredients = await getIngredients() ?? [];
-      const formattedData = ingredients.map((item: any) => ({  // so the themed dropdown can search it
-        label: item.name,
-        value: item.id,
-      }));
-      setIngredientDropdownData(formattedData);
-    }
-
-
-    setIngredientsHook();
-  }, []);
+  
 
   function addIngredient() {
     const newIngredientCard: NewIngredient = {
-      id: ingredientsArr.length,
+      id: currCount,
       value: null
     };
+    setCurrCount(value => ++value);
     // create a new array reference
     setIngredientsArr([...ingredientsArr, newIngredientCard]);
+    console.log(currCount)
   }
 
-  function removeIngredient(index: number) {
-    ingredientsArr.splice(index, 1); // remove the ingredient at the specified index
-
-    // reassign IDs to match the current index
-    ingredientsArr.forEach((ingredient, i) => {
-      ingredient.id = i;
-    });
+  function removeIngredient(id: number) {
+    const newArr = ingredientsArr.filter(item => item.id !== id);
+    setIngredientsArr(newArr);
   }
 
   function changeIngredient(itemId: number, value: number) {
@@ -57,9 +43,13 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
   }
 
   const renderItem = ({ item }: any) => {
-    console.log(item)
     return (
-      <ThemedSearchDropdown id={item.id} data={ingredientDropdownData} onChange={(value) => changeIngredient(item.id, value)} />
+      <View style={styles.ingredientCardContainer}>
+        <TouchableOpacity onPress={() => removeIngredient(item.id)} activeOpacity={0.2} style={styles.removeButton}>
+          <FontAwesome6 name="circle-xmark" size={23} color="#042628" />
+        </TouchableOpacity>
+        <ThemedSearchDropdown id={item.id} data={ingredientDropDownData} onChange={(value) => changeIngredient(item.id, value)} />
+      </View>
     );
   }
 
@@ -68,6 +58,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr }: Ad
     <View style={styles.addIngredientContainer}>
       <View style={styles.listContainer}>
         <FlatList
+        style={{paddingTop: 20, paddingHorizontal: 13}}
           data={ingredientsArr}
           renderItem={renderItem}
           keyExtractor={(i) => i.id.toString()}
@@ -88,10 +79,35 @@ const styles = StyleSheet.create({
   addIngredientContainer: {
     marginTop: 8,
     flex: 1,
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    overflow: 'visible'
   },
   listContainer: {
     height: 180,
+    overflow: 'visible'
+  },
+  ingredientCardContainer: {
+    position: 'relative', // Ensure the container is relative for the absolute positioning to work
+    padding: 0,
+    overflow: 'visible'
+  },
+  removeButton: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    backgroundColor: '#FFF',
+    borderRadius: 24,
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2, // Add shadow (Android)
+    shadowColor: '#000', // Add shadow (iOS)
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    zIndex: 2,
+    overflow: 'visible'
   },
   addButtonContainer: {
     alignItems: 'center'
