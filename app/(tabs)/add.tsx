@@ -28,6 +28,7 @@ export default function Add() {
   // all fields separated so it's easier for readability
   const [recipeName, setRecipeName] = useState('');
   const [recipeTime, setRecipeTime] = useState(0);
+  const [servings, setServings] = useState(0);
   const [recipeTimeUnits, setRecipeTimeUnits] = useState('');
   const [ingredients, setIngredients] = useState<NewIngredient[]>([]);
 
@@ -82,6 +83,9 @@ export default function Add() {
             <ThemedDropdown data={Array.from({ length: 60 }, (_, i) => ({ value: (i + 1).toString(), label: (i + 1).toString() }))}
               fa6Icon={'clock'} style={{ width: '49%' }} onChange={setRecipeTime} />
             <ThemedDropdown data={timeSelections} fa6Icon={'ruler-horizontal'} style={{ width: '49%' }} onChange={setRecipeTimeUnits} />
+          </View>
+          <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+            <ThemedTextbox onTextChange={setServings} placeholder='Servings'/>
           </View>
 
           <View style={{ overflow: 'visible' }}>

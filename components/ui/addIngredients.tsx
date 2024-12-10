@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     overflow: 'visible'
   },
   listContainer: {
-    height: 180,
+    height: 135,
     overflow: 'visible'
   },
   ingredientCardContainer: {
