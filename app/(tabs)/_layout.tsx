@@ -60,7 +60,7 @@ export default function TabLayout() {
   );
 }
 
-function FloatingTabButton({ onPress }) {
+function FloatingTabButton({ onPress }: any) {
   const isFocused = useIsFocused(); // Determine if the tab is active
   const color = isFocused ? Colors['light'].tint : '#97a2b0';
 

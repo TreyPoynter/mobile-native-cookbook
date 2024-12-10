@@ -3,10 +3,14 @@ import { StyleSheet, View, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ThemedTextbox from '@/components/ThemedTextbox';
 import TabSwitcher from '@/components/TabSwitcher';
+import AddBasicInfo from '@/components/ui/addBasicInfo';
 import AddIngredients from '../../components/ui/addIngredients';
 import AddInstructions from '../../components/ui/addInstructions';
 import ThemedDropdown from '@/components/ThemedDropdown';
 import { getIngredients } from '@/db/queries/ingredients';
+import ProgressTracker from '@/components/ui/ProgressTracker';
+import { ProgressTrackerPage } from '@/components/ui/ProgressTracker';
+import { Text } from 'react-native';
 
 export type Ingredient = {
   name: string,
@@ -18,13 +22,14 @@ export type NewIngredient = {
   name?: string | null,
 }
 
-const timeSelections = [
-  { label: 'Minutes', value: 'Minutes' },
-  { label: 'Hours', value: 'Hours' },
-  { label: 'Days', value: 'Days' },
-];
+
+
+
 
 export default function Add() {
+
+  
+
   // all fields separated so it's easier for readability
   const [recipeName, setRecipeName] = useState('');
   const [recipeTime, setRecipeTime] = useState(0);
@@ -35,6 +40,12 @@ export default function Add() {
   const [selectedTab, setSelectedTab] = useState("Ingredients");
   const [ingredientDropdownData, setIngredientDropdownData] = useState<any>([]);
   const [currIngredientCount, setCurrIngredientCount] = useState(0);
+
+  const pages: ProgressTrackerPage[] = [
+    { component: <AddBasicInfo setRecipeTitle={setRecipeName}/>, pageId: 'step1', entypoIcon: 'info' },
+    { component: <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients} ingredientDropDownData={ingredientDropdownData} setCurrCount={setCurrIngredientCount} currCount={currIngredientCount}/>, pageId: 'step2', entypoIcon: 'bowl' },
+    { component: <Text>Step 3 Content</Text>, pageId: 'step3', entypoIcon: 'clipboard' },
+  ];
 
   useEffect(() => {
     async function setIngredientsHook() {
@@ -76,9 +87,11 @@ export default function Add() {
         />
       </View>
 
-      <View style={styles.scrollableModuleContainer}>
+      <View style={styles.moduleContainer}>
+        <ProgressTracker pages={pages} />
+        {/* 
         <View style={styles.scrollableContent}>
-          <ThemedTextbox placeholder='Recipe Title' onTextChange={setRecipeName} />
+          
           <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
             <ThemedDropdown data={Array.from({ length: 60 }, (_, i) => ({ value: (i + 1).toString(), label: (i + 1).toString() }))}
               fa6Icon={'clock'} style={{ width: '49%' }} onChange={setRecipeTime} />
@@ -87,14 +100,8 @@ export default function Add() {
           <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
             <ThemedTextbox onTextChange={setServings} placeholder='Servings'/>
           </View>
-
-          <View style={{ overflow: 'visible' }}>
-            <TabSwitcher tab1='Ingredients' tab2='Instructions' onTab1Click={() => setSelectedTab('Ingredients')} onTab2Click={() => setSelectedTab('Instructions')} />
-            {
-              renderTabContent()
-            }
-          </View>
         </View>
+        */}
       </View>
     </View>
   );
@@ -118,7 +125,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 300,
   },
-  scrollableModuleContainer: {
+  moduleContainer: {
     position: 'absolute',
     top: 200, // adjust to set the position of the scrollable content
     left: 0,
@@ -129,12 +136,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     overflow: 'visible',
-  },
-  scrollableContent: {
     padding: 20,
-    display: 'flex',
-    gap: 8,
-    overflow: 'visible'
   },
   textContent: {
     fontSize: 16,

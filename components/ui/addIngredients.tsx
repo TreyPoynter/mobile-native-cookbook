@@ -82,13 +82,12 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingre
 
 const styles = StyleSheet.create({
   addIngredientContainer: {
-    marginTop: 8,
     flex: 1,
     justifyContent: 'flex-start',
     overflow: 'visible'
   },
   listContainer: {
-    height: 135,
+    height: 300,
     overflow: 'visible'
   },
   ingredientCardContainer: {
