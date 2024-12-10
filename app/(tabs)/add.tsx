@@ -6,45 +6,40 @@ import TabSwitcher from '@/components/TabSwitcher';
 import AddBasicInfo from '@/components/ui/addBasicInfo';
 import AddIngredients from '../../components/ui/addIngredients';
 import AddInstructions from '../../components/ui/addInstructions';
-import ThemedDropdown from '@/components/ThemedDropdown';
 import { getIngredients } from '@/db/queries/ingredients';
 import ProgressTracker from '@/components/ui/ProgressTracker';
 import { ProgressTrackerPage } from '@/components/ui/ProgressTracker';
 import { Text } from 'react-native';
 
-export type Ingredient = {
-  name: string,
-  calories: number
-}
 export type NewIngredient = {
   id: number
   value?: number | null,
   name?: string | null,
 }
-
-
-
-
+export type NewInstruction = {
+  id: number
+  value?: number | null,
+  text?: string | null,
+}
 
 export default function Add() {
-
-  
-
   // all fields separated so it's easier for readability
   const [recipeName, setRecipeName] = useState('');
   const [recipeTime, setRecipeTime] = useState(0);
   const [servings, setServings] = useState(0);
   const [recipeTimeUnits, setRecipeTimeUnits] = useState('');
   const [ingredients, setIngredients] = useState<NewIngredient[]>([]);
+  const [instructions, setInstructions] = useState<NewInstruction[]>([]);
 
   const [selectedTab, setSelectedTab] = useState("Ingredients");
   const [ingredientDropdownData, setIngredientDropdownData] = useState<any>([]);
-  const [currIngredientCount, setCurrIngredientCount] = useState(0);
+  const [currCount, setCurrCount] = useState(0);
 
   const pages: ProgressTrackerPage[] = [
-    { component: <AddBasicInfo setRecipeTitle={setRecipeName} setRecipeTime={setRecipeTime} SetRecipeServings={setServings} setRecipeTimeUnits={setRecipeTimeUnits}/>, pageId: 'step1', entypoIcon: 'info' },
-    { component: <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients} ingredientDropDownData={ingredientDropdownData} setCurrCount={setCurrIngredientCount} currCount={currIngredientCount}/>, pageId: 'step2', entypoIcon: 'bowl' },
-    { component: <Text>Step 3 Content</Text>, pageId: 'step3', entypoIcon: 'clipboard' },
+    { component: <AddBasicInfo recipeTitle={recipeName} setRecipeTitle={setRecipeName} recipeTime={recipeTime} setRecipeTime={setRecipeTime} servings={servings} setServings={setServings} recipeTimeUnits={recipeTimeUnits} setRecipeTimeUnits={setRecipeTimeUnits}/>, pageId: 'basic', entypoIcon: 'info' },
+    { component: <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients} ingredientDropDownData={ingredientDropdownData} setCurrCount={setCurrCount} currCount={currCount}/>, pageId: 'ingredients', entypoIcon: 'bowl' },
+    { component: <AddInstructions instructionsArr={instructions} setInstructionsArr={setInstructions} currCount={currCount} setCurrCount={setCurrCount}/>, pageId: 'instructions', entypoIcon: 'clipboard' },
+    { component: <Text>Step 3 Content</Text>, pageId: 'step4', entypoIcon: 'flag' },
   ];
 
   useEffect(() => {
@@ -59,20 +54,6 @@ export default function Add() {
 
     setIngredientsHook();
   }, []);
-
-  const renderTabContent = () => {
-    switch (selectedTab) {
-      case "Ingredients":
-        return <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients}
-          ingredientDropDownData={ingredientDropdownData} currCount={currIngredientCount} setCurrCount={setCurrIngredientCount} />;
-      case "Instructions":
-        return <AddInstructions />;
-      default:  // in case the values get tampered with somehow
-        setSelectedTab('Ingredients');
-        return <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients}
-          ingredientDropDownData={ingredientDropdownData} currCount={currIngredientCount} setCurrCount={setCurrIngredientCount} />;
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -114,11 +95,11 @@ const styles = StyleSheet.create({
   },
   moduleContainer: {
     position: 'absolute',
-    top: 200, // adjust to set the position of the scrollable content
+    top: 200, // adjust to set the position
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgb(255, 255, 255)', // semi-transparent background
+    backgroundColor: 'rgb(255, 255, 255)',
     zIndex: 2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

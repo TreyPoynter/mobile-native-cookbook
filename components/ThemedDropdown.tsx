@@ -11,10 +11,11 @@ export type ThemedDropdownProps = {
   focusColor?: string,
   style?: any,
   id?: number,
+  parentValue?: any,
   onChange: (changedValue: any) => any,
   
 }
-export default function ThemedDropdown({ data, placeholder, dropdownLabel, fa6Icon, focusColor, style, onChange }: ThemedDropdownProps) {
+export default function ThemedDropdown({ data, placeholder, dropdownLabel, fa6Icon, focusColor, style, onChange, parentValue }: ThemedDropdownProps) {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
 
@@ -43,7 +44,7 @@ export default function ThemedDropdown({ data, placeholder, dropdownLabel, fa6Ic
         labelField="label"
         valueField="value"
         placeholder={!isFocus ? placeholder : '...'}
-        value={value}
+        value={value ? value : parentValue}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={item => {

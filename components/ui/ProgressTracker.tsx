@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   line: {
-    width: 130,
+    width: 80,
     height: 4,
     backgroundColor: '#ccc',
   },

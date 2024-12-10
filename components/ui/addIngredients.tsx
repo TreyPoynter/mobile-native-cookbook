@@ -23,7 +23,6 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingre
     setCurrCount(value => ++value);
     // create a new array reference
     setIngredientsArr([...ingredientsArr, newIngredientCard]);
-    console.log(currCount)
   }
 
   function removeIngredient(id: number) {
@@ -47,7 +46,6 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingre
   
 
   const renderItem = ({ item }: any) => {
-    console.log(item)
     return (
       <View style={styles.ingredientCardContainer}>
         <TouchableOpacity onPress={() => removeIngredient(item.id)} activeOpacity={0.2} style={styles.removeButton}>
@@ -69,7 +67,6 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingre
           keyExtractor={(i) => i.id.toString()}
         />
       </View>
-
       <View style={styles.addButtonContainer}>
         <TouchableOpacity onPress={addIngredient} activeOpacity={0.8} style={styles.addButton}>
           <FontAwesome6 name="add" size={24} color="white" />
