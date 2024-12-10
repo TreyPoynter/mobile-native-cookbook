@@ -1,6 +1,6 @@
 import { TouchableOpacity, View, StyleSheet, FlatList } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 import { NewIngredient } from "@/app/(tabs)/add";
 import ThemedSearchDropdown from "../ThemedSearchDropdown";
 import { getIngredientById } from "@/db/queries/ingredients";
@@ -32,14 +32,14 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingre
   }
 
   async function changeIngredient(itemId: number, value: number) {
-    // Fetch the name asynchronously
+    // fetch the name asynchronously
     const ingName = await getIngredientById(value);
   
-    // Update the state with the new value and name
+    // update the state with the new value and name
     setIngredientsArr(prevArr =>
       prevArr.map(ingredient =>
         ingredient.id === itemId
-          ? { ...ingredient, value, name: ingName.name } // Update both value and name
+          ? { ...ingredient, value, name: (ingName as NewIngredient).name } // update both value and name
           : ingredient
       )
     );
