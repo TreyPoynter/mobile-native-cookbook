@@ -89,19 +89,6 @@ export default function Add() {
 
       <View style={styles.moduleContainer}>
         <ProgressTracker pages={pages} />
-        {/* 
-        <View style={styles.scrollableContent}>
-          
-          <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
-            <ThemedDropdown data={Array.from({ length: 60 }, (_, i) => ({ value: (i + 1).toString(), label: (i + 1).toString() }))}
-              fa6Icon={'clock'} style={{ width: '49%' }} onChange={setRecipeTime} />
-            <ThemedDropdown data={timeSelections} fa6Icon={'ruler-horizontal'} style={{ width: '49%' }} onChange={setRecipeTimeUnits} />
-          </View>
-          <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
-            <ThemedTextbox onTextChange={setServings} placeholder='Servings'/>
-          </View>
-        </View>
-        */}
       </View>
     </View>
   );
