@@ -42,7 +42,7 @@ export default function Add() {
   const [currIngredientCount, setCurrIngredientCount] = useState(0);
 
   const pages: ProgressTrackerPage[] = [
-    { component: <AddBasicInfo setRecipeTitle={setRecipeName}/>, pageId: 'step1', entypoIcon: 'info' },
+    { component: <AddBasicInfo setRecipeTitle={setRecipeName} setRecipeTime={setRecipeTime} SetRecipeServings={setServings} setRecipeTimeUnits={setRecipeTimeUnits}/>, pageId: 'step1', entypoIcon: 'info' },
     { component: <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients} ingredientDropDownData={ingredientDropdownData} setCurrCount={setCurrIngredientCount} currCount={currIngredientCount}/>, pageId: 'step2', entypoIcon: 'bowl' },
     { component: <Text>Step 3 Content</Text>, pageId: 'step3', entypoIcon: 'clipboard' },
   ];
