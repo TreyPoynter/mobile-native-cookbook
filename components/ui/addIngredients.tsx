@@ -4,6 +4,7 @@ import React from "react";
 import { NewIngredient } from "@/app/(tabs)/add";
 import ThemedSearchDropdown from "../ThemedSearchDropdown";
 import { getIngredientById } from "@/db/queries/ingredients";
+import CenteredPickerModal from "../CenteredPickerModal";
 
 type AddIngredientsPageProps = {
   ingredientsArr: NewIngredient[],
@@ -13,12 +14,14 @@ type AddIngredientsPageProps = {
   setCurrCount: React.Dispatch<React.SetStateAction<number>>,
 }
 
-export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingredientDropDownData, currCount, setCurrCount }: AddIngredientsPageProps) {
+export default function AddIngredients({ ingredientsArr, setIngredientsArr, ingredientDropDownData, currCount, setCurrCount }: AddIngredientsPageProps) {
   function addIngredient() {
     const newIngredientCard: NewIngredient = {
       id: currCount,
-      value: null,
-      name: null
+      value: undefined,
+      name: undefined,
+      amount: 1,
+      unit: 'milliliter'
     };
     setCurrCount(value => ++value);
     // create a new array reference
@@ -33,7 +36,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingre
   async function changeIngredient(itemId: number, value: number) {
     // fetch the name asynchronously
     const ingName = await getIngredientById(value);
-  
+
     // update the state with the new value and name
     setIngredientsArr(prevArr =>
       prevArr.map(ingredient =>
@@ -43,15 +46,29 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingre
       )
     );
   }
-  
+
+  function changeIngredientAmount(value: number, unit: string, id: number) {
+    setIngredientsArr(prevArr =>
+      prevArr.map(ingredient =>
+        ingredient.id === id
+          ? { ...ingredient, unit: unit, amount: value } // update both amt and unit
+          : ingredient
+      )
+    );
+  }
+
 
   const renderItem = ({ item }: any) => {
+    const currItem = (item as NewIngredient)
     return (
       <View style={styles.ingredientCardContainer}>
-        <TouchableOpacity onPress={() => removeIngredient(item.id)} activeOpacity={0.2} style={styles.removeButton}>
+        <TouchableOpacity onPress={() => removeIngredient(currItem.id)} activeOpacity={0.2} style={styles.removeButton}>
           <FontAwesome6 name="circle-xmark" size={23} color="#042628" />
         </TouchableOpacity>
-        <ThemedSearchDropdown id={item.id} data={ingredientDropDownData} onChange={(value) => changeIngredient(item.id, value)} dropdownLabel={item.name}/>
+        <ThemedSearchDropdown id={currItem.id} data={ingredientDropDownData} onChange={(value) => changeIngredient(currItem.id, value)} dropdownLabel={currItem.name} />
+        <View style={styles.pickerModalContainer}>
+          <CenteredPickerModal onChange={(v, u) => changeIngredientAmount(v, u, currItem.id)} value={currItem.amount} unit={currItem.unit}/>
+        </View>
       </View>
     );
   }
@@ -61,7 +78,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr,ingre
     <View style={styles.addIngredientContainer}>
       <View style={styles.listContainer}>
         <FlatList
-        style={{paddingTop: 20, paddingHorizontal: 13}}
+          style={{ paddingTop: 20, paddingHorizontal: 13 }}
           data={ingredientsArr}
           renderItem={renderItem}
           keyExtractor={(i) => i.id.toString()}
@@ -120,5 +137,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#70b9be',
     borderRadius: 50,
     alignItems: 'center'
+  },
+  pickerModalContainer: {
+    position: 'absolute',
+    top: '10%',
+    right: 10,
+    width: 150,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowRadius: 4,
+    zIndex: 2,
+    overflow: 'visible'
   }
 });

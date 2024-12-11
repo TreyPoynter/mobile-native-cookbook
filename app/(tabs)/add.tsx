@@ -12,14 +12,21 @@ import { ProgressTrackerPage } from '@/components/ui/ProgressTracker';
 import { Text } from 'react-native';
 
 export type NewIngredient = {
-  id: number
-  value?: number | null,
-  name?: string | null,
+  id: number,
+  value?: number | undefined,
+  name?: string | undefined,
+  amount?: number,
+  unit?: string
 }
 export type NewInstruction = {
-  id: number
-  length: number
+  id: number,
+  length: number,
   text?: string | null,
+}
+export type NewRecipe = {
+  recipeName: string,
+  recipeTime: number,
+  baseServings: number,
 }
 
 export default function Add() {
@@ -46,6 +53,7 @@ export default function Add() {
       const formattedData = ingredientsDbData.map((item: any) => ({  // so the themed dropdown can render/search it
         label: item.name,
         value: item.id,
+        
       }));
       setIngredientDropdownData(formattedData);
     }
