@@ -1,8 +1,9 @@
-import { View, TextInput, StyleSheet } from "react-native"
+import { View, TextInput, StyleSheet, NativeSyntheticEvent, TextInputKeyPressEventData } from "react-native"
 
 type ThemedTextboxProps = {
   isProtected?: boolean
-  onTextChange?: any
+  onTextChange?: ((text: string) => void)
+  onKeyPress?: ((text: NativeSyntheticEvent<TextInputKeyPressEventData>) => void)
   placeholder?: string
   value?: string
   multiline?: boolean
@@ -10,7 +11,7 @@ type ThemedTextboxProps = {
   styles?: any
 }
 
-export default function ThemedTextbox({isProtected, onTextChange, placeholder, value, multiline = false, numLines = 1, styles}: ThemedTextboxProps) {
+export default function ThemedTextbox({isProtected, onTextChange, placeholder, value, multiline = false, numLines = 1, styles, onKeyPress}: ThemedTextboxProps) {
 
   function getValue() {
     if(value)
@@ -19,7 +20,7 @@ export default function ThemedTextbox({isProtected, onTextChange, placeholder, v
   }
 
   return(
-    <TextInput multiline={multiline} secureTextEntry={isProtected} onChangeText={onTextChange} numberOfLines={numLines} value={getValue()}
+    <TextInput multiline={multiline} secureTextEntry={isProtected} onChangeText={onTextChange} onKeyPress={onKeyPress} numberOfLines={numLines} value={getValue()}
       placeholderTextColor={'#97A2B0'} placeholder={placeholder} style={[textboxStyles.textInput, styles, { height: 45*numLines }]}
     />
   )

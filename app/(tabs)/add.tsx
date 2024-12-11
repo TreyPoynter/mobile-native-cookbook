@@ -18,7 +18,7 @@ export type NewIngredient = {
 }
 export type NewInstruction = {
   id: number
-  value?: number | null,
+  length: number
   text?: string | null,
 }
 
@@ -30,8 +30,6 @@ export default function Add() {
   const [recipeTimeUnits, setRecipeTimeUnits] = useState('');
   const [ingredients, setIngredients] = useState<NewIngredient[]>([]);
   const [instructions, setInstructions] = useState<NewInstruction[]>([]);
-
-  const [selectedTab, setSelectedTab] = useState("Ingredients");
   const [ingredientDropdownData, setIngredientDropdownData] = useState<any>([]);
   const [currCount, setCurrCount] = useState(0);
 
