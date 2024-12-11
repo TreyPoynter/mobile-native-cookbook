@@ -37,7 +37,7 @@ export default function AddInstructions({ instructionsArr, setInstructionsArr, c
     console.log(text)
      // remove any newline characters (Enter key effect) from the text
     const sanitizedText = text.replace(/\n/g, '');
-    if (sanitizedText.length >= MAX_CHARACTERS)
+    if (sanitizedText.length > MAX_CHARACTERS)
       return;
 
     // update the state with the new value and name
