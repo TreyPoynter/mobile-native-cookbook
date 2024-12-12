@@ -53,7 +53,7 @@ export default function Add() {
       timeUnits: recipeTimeUnits,
       baseServings: servings,
       ingredients: ingredients,
-      instructions: ingredients
+      instructions: instructions
     }}/>, pageId: 'step4', entypoIcon: 'flag' },
   ];
 

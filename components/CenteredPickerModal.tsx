@@ -44,7 +44,7 @@ const CenteredPickerModal = (props: CenteredPickerModalProps) => {
   return (
     <View style={styles.container}>
       {/* Main Screen */}
-      <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)} activeOpacity={0.8}>
         {renderText()}
       </TouchableOpacity>
 
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   closeText: {
-    color: '#007bff',
+    color: '#70b9be',
     fontWeight: 'bold',
   },
   pickerContainer: {
