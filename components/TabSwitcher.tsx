@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   tabButton: {
-    
     borderRadius: 16,
     width: '45%',
     padding: 10

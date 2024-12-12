@@ -10,6 +10,7 @@ import { getIngredients } from '@/db/queries/ingredients';
 import ProgressTracker from '@/components/ui/ProgressTracker';
 import { ProgressTrackerPage } from '@/components/ui/ProgressTracker';
 import { Text } from 'react-native';
+import ConfirmRecipe from '@/components/ui/confirmRecipe';
 
 export type NewIngredient = {
   id: number,
@@ -20,13 +21,15 @@ export type NewIngredient = {
 }
 export type NewInstruction = {
   id: number,
-  length: number,
   text?: string | null,
 }
 export type NewRecipe = {
   recipeName: string,
   recipeTime: number,
+  timeUnits: string
   baseServings: number,
+  ingredients: NewIngredient[]
+  instructions?: NewInstruction[]
 }
 
 export default function Add() {
@@ -44,7 +47,14 @@ export default function Add() {
     { component: <AddBasicInfo recipeTitle={recipeName} setRecipeTitle={setRecipeName} recipeTime={recipeTime} setRecipeTime={setRecipeTime} servings={servings} setServings={setServings} recipeTimeUnits={recipeTimeUnits} setRecipeTimeUnits={setRecipeTimeUnits}/>, pageId: 'basic', entypoIcon: 'info' },
     { component: <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients} ingredientDropDownData={ingredientDropdownData} setCurrCount={setCurrCount} currCount={currCount}/>, pageId: 'ingredients', entypoIcon: 'bowl' },
     { component: <AddInstructions instructionsArr={instructions} setInstructionsArr={setInstructions} currCount={currCount} setCurrCount={setCurrCount}/>, pageId: 'instructions', entypoIcon: 'clipboard' },
-    { component: <Text>Step 3 Content</Text>, pageId: 'step4', entypoIcon: 'flag' },
+    { component: <ConfirmRecipe newRecipe={{
+      recipeName: recipeName,
+      recipeTime: recipeTime,
+      timeUnits: recipeTimeUnits,
+      baseServings: servings,
+      ingredients: ingredients,
+      instructions: ingredients
+    }}/>, pageId: 'step4', entypoIcon: 'flag' },
   ];
 
   useEffect(() => {

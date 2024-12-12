@@ -18,7 +18,6 @@ export default function AddInstructions({ instructionsArr, setInstructionsArr, c
   function addInstruction() {
     const newIngredientCard: NewInstruction = {
       id: currCount,
-      length: 0,
       text: ''
     };
     console.log(newIngredientCard)
@@ -44,7 +43,7 @@ export default function AddInstructions({ instructionsArr, setInstructionsArr, c
     setInstructionsArr(prevArr =>
       prevArr.map(instruction =>
         instruction.id === itemId
-          ? { ...instruction, text: sanitizedText, length: sanitizedText.length } // update both value and name
+          ? { ...instruction, text: sanitizedText } // update both value and name
           : instruction
       )
     );
@@ -73,7 +72,7 @@ export default function AddInstructions({ instructionsArr, setInstructionsArr, c
           }
         }} onTextChange={(e) => changeInstruction(item.id, e)} 
         value={instructionsArr.find((instruction) => instruction.id === item.id)?.text || ''}/>
-        <ThemedText>{item.length} / {MAX_CHARACTERS}</ThemedText>
+        <ThemedText>{item.text.length} / {MAX_CHARACTERS}</ThemedText>
       </View>
     );
   }
