@@ -19,6 +19,10 @@ export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
         newRecipe.ingredients.filter(i => i.name).map((ingredient, i) => (
           <View style={styles.listItem}>
             <ThemedText>{ingredient.name}</ThemedText>
+            <View>
+              <ThemedText>{ingredient.value}</ThemedText>
+              <ThemedText>{ingredient?.unit}</ThemedText>
+            </View>
           </View>
         ))
       );
