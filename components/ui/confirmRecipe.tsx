@@ -4,6 +4,7 @@ import { ThemedText } from "../ThemedText";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import TabSwitcher from "../TabSwitcher";
 import { useState } from "react";
+import { addRecipe } from "@/db/queries/recipes";
 
 type ConfirmRecipeProps = {
   newRecipe: NewRecipe
@@ -13,15 +14,20 @@ export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
 
   const [currSelectedTab, setCurrSelectedTab] = useState('Ingredients');
 
+  async function onConfirmRecipe() {
+
+    await addRecipe(newRecipe);
+  }
+
   function renderTabContent() {
     if (currSelectedTab == "Ingredients") {
       return (
         newRecipe.ingredients.filter(i => i.name).map((ingredient, i) => (
           <View style={styles.listItem}>
             <ThemedText>{ingredient.name}</ThemedText>
-            <View>
-              <ThemedText>{ingredient.value}</ThemedText>
-              <ThemedText>{ingredient?.unit}</ThemedText>
+            <View style={{flexDirection: 'row', gap: 4}}>
+              <ThemedText>{ingredient.amount}</ThemedText>
+              <ThemedText>{ingredient?.unit}{(ingredient.amount || 1) > 1 ? 's' : ''}</ThemedText>
             </View>
           </View>
         ))
@@ -53,7 +59,7 @@ export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
       {
         renderTabContent()
       }
-      <TouchableOpacity style={styles.addButton} activeOpacity={0.8}>
+      <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onConfirmRecipe}>
         <FontAwesome6 name="book" size={24} color="white" />
         <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Add to Cookbook</ThemedText>
       </TouchableOpacity>
@@ -84,7 +90,9 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 10,
     paddingHorizontal: 10,
-    marginTop: 8
+    marginTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   addButton: {
     backgroundColor: '#70b9be',
