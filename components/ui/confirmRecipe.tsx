@@ -22,8 +22,8 @@ export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
   function renderTabContent() {
     if (currSelectedTab == "Ingredients") {
       return (
-        newRecipe.ingredients.filter(i => i.name).map((ingredient, i) => (
-          <View style={styles.listItem}>
+        newRecipe.ingredients.map((ingredient, i) => (
+          <View style={styles.listItem} key={ingredient.id}>
             <ThemedText>{ingredient.name}</ThemedText>
             <View style={{flexDirection: 'row', gap: 4}}>
               <ThemedText>{ingredient.amount}</ThemedText>
@@ -34,8 +34,8 @@ export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
       );
     }
     return (
-      newRecipe.instructions?.filter(i => i.text).map((instruct, i) => (
-        <View style={[styles.listItem, { minHeight: 80 }]}>
+      newRecipe.instructions?.map((instruct, i) => (
+        <View key={instruct.id} style={[styles.listItem, { minHeight: 80 }]}>
           <ThemedText>{instruct.text}</ThemedText>
         </View>
       ))
@@ -49,7 +49,7 @@ export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
 
         <View style={styles.timeContainer}>
           {
-            (newRecipe?.recipeTime && newRecipe?.timeUnits) && <FontAwesome6 name="clock" size={24} color="#7c8990" />
+            (newRecipe?.recipeTime && newRecipe?.timeUnits) ? <FontAwesome6 name="clock" size={24} color="#7c8990" /> : null
           }
           <ThemedText style={{ color: '#7c8990' }}>{newRecipe?.recipeTime != 0 ? newRecipe.recipeTime.toString() : ''}</ThemedText>
           <ThemedText style={{ color: '#7c8990' }}>{newRecipe?.timeUnits || ''}</ThemedText>

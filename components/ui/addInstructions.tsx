@@ -1,5 +1,5 @@
 import { TouchableOpacity, View, StyleSheet, FlatList, Keyboard, NativeSyntheticEvent, TextInputKeyPressEventData } from "react-native";
-import { FontAwesome6 } from "@expo/vector-icons";
+import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { NewInstruction } from "@/app/(tabs)/add";
 import ThemedTextbox from "../ThemedTextbox";
@@ -15,6 +15,14 @@ type AddIngredientsPageProps = {
 }
 
 export default function AddInstructions({ instructionsArr, setInstructionsArr, currCount, setCurrCount }: AddIngredientsPageProps) {
+
+  const emptyArrayWords = [
+    'The kitchen is quiet! Write your recipe\'s story one step at a time.',
+    'No instructions yet? It\'s your time to shine as the head chef—guide the way!',
+    'Cooking adventures start here! Add some instructions to lead the way.',
+    'Missing the magic? Add step-by-step instructions to create your masterpiece!',
+  ];
+
   function addInstruction() {
     const newIngredientCard: NewInstruction = {
       id: currCount,
@@ -34,7 +42,7 @@ export default function AddInstructions({ instructionsArr, setInstructionsArr, c
 
   async function changeInstruction(itemId: number, text: string) {
     console.log(text)
-     // remove any newline characters (Enter key effect) from the text
+    // remove any newline characters (Enter key effect) from the text
     const sanitizedText = text.replace(/\n/g, '');
     if (sanitizedText.length > MAX_CHARACTERS)
       return;
@@ -70,8 +78,8 @@ export default function AddInstructions({ instructionsArr, setInstructionsArr, c
             // Prevent further processing of the key press if it's "Enter"
             e.preventDefault();
           }
-        }} onTextChange={(e) => changeInstruction(item.id, e)} 
-        value={instructionsArr.find((instruction) => instruction.id === item.id)?.text || ''}/>
+        }} onTextChange={(e) => changeInstruction(item.id, e)}
+          value={instructionsArr.find((instruction) => instruction.id === item.id)?.text || ''} />
         <ThemedText>{item.text.length} / {MAX_CHARACTERS}</ThemedText>
       </View>
     );
@@ -81,13 +89,21 @@ export default function AddInstructions({ instructionsArr, setInstructionsArr, c
   return (
     <View style={styles.addInstructionContainer} >
       <View style={styles.listContainer}>
-        <FlatList
-          style={{ paddingTop: 20, paddingHorizontal: 13 }}
-          data={instructionsArr}
-          renderItem={renderItem}
-          keyExtractor={(i) => i.id.toString()}
-          keyboardShouldPersistTaps="handled"
-        />
+        {
+          instructionsArr.length > 0 ?
+            <FlatList
+              style={{ paddingTop: 20, paddingHorizontal: 13 }}
+              data={instructionsArr}
+              renderItem={renderItem}
+              keyExtractor={(i) => i.id.toString()}
+              keyboardShouldPersistTaps="handled"
+            /> :
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 60 }}>
+              <Ionicons name="map" size={100} color="#ccc" />
+              <ThemedText style={{ color: '#ccc', textAlign: 'center' }}>{emptyArrayWords[Math.floor(Math.random() * emptyArrayWords.length)]}</ThemedText>
+            </View>
+        }
+
       </View>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity onPress={addInstruction} activeOpacity={0.8} style={styles.addButton}>

@@ -1,10 +1,11 @@
 import { TouchableOpacity, View, StyleSheet, FlatList } from "react-native";
-import { FontAwesome6 } from "@expo/vector-icons";
+import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { NewIngredient } from "@/app/(tabs)/add";
 import ThemedSearchDropdown from "../ThemedSearchDropdown";
 import { getIngredientById } from "@/db/queries/ingredients";
 import CenteredPickerModal from "../CenteredPickerModal";
+import { ThemedText } from "../ThemedText";
 
 type AddIngredientsPageProps = {
   ingredientsArr: NewIngredient[],
@@ -15,6 +16,14 @@ type AddIngredientsPageProps = {
 }
 
 export default function AddIngredients({ ingredientsArr, setIngredientsArr, ingredientDropDownData, currCount, setCurrCount }: AddIngredientsPageProps) {
+
+  const emptyArrayWords = [
+    'Looks like the pantry is empty! Add some ingredients to get cooking!',
+    'Every great recipe starts with ingredients. Add yours to begin!',
+    'If you ain\'t sneezin\' it ain\'t seasoned.',
+    'An empty plate? Let\'s fill it with flavor—add your ingredients now!',
+  ];
+
   function addIngredient() {
     const newIngredientCard: NewIngredient = {
       id: currCount,
@@ -59,6 +68,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr, ingr
 
 
   const renderItem = ({ item }: any) => {
+
     const currItem = (item as NewIngredient)
     return (
       <View style={styles.ingredientCardContainer}>
@@ -67,7 +77,7 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr, ingr
         </TouchableOpacity>
         <ThemedSearchDropdown id={currItem.id} data={ingredientDropDownData} onChange={(value) => changeIngredient(currItem.id, value)} dropdownLabel={currItem.name} />
         <View style={styles.pickerModalContainer}>
-          <CenteredPickerModal onChange={(v, u) => changeIngredientAmount(v, u, currItem.id)} value={currItem.amount} unit={currItem.unit}/>
+          <CenteredPickerModal onChange={(v, u) => changeIngredientAmount(v, u, currItem.id)} value={currItem.amount} unit={currItem.unit} />
         </View>
       </View>
     );
@@ -77,12 +87,21 @@ export default function AddIngredients({ ingredientsArr, setIngredientsArr, ingr
   return (
     <View style={styles.addIngredientContainer}>
       <View style={styles.listContainer}>
-        <FlatList
-          style={{ paddingTop: 20, paddingHorizontal: 13 }}
-          data={ingredientsArr}
-          renderItem={renderItem}
-          keyExtractor={(i) => i.id.toString()}
-        />
+        {
+          ingredientsArr.length > 0 ?
+            <FlatList
+              style={{ paddingTop: 20, paddingHorizontal: 13 }}
+              data={ingredientsArr}
+              renderItem={renderItem}
+              keyExtractor={(i) => i.id.toString()}
+            />
+            :
+            <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 60}}>
+              <Ionicons name="sparkles" size={100} color="#ccc" />
+              <ThemedText style={{color: '#ccc', textAlign: 'center'}}>{emptyArrayWords[Math.floor(Math.random() * emptyArrayWords.length)]}</ThemedText>
+            </View>
+        }
+
       </View>
       <View style={styles.addButtonContainer}>
         <TouchableOpacity onPress={addIngredient} activeOpacity={0.8} style={styles.addButton}>

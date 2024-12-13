@@ -52,8 +52,8 @@ export default function Add() {
       recipeTime: recipeTime,
       timeUnits: recipeTimeUnits,
       baseServings: servings,
-      ingredients: ingredients,
-      instructions: instructions
+      ingredients: ingredients.filter(i => i.name),  // make sure there's no empty added fields
+      instructions: instructions.filter(i => i.text)
     }}/>, pageId: 'step4', entypoIcon: 'flag' },
   ];
 

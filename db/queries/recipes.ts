@@ -4,7 +4,7 @@ import { NewRecipe } from '@/app/(tabs)/add';
 
 export async function addRecipe(recipe: NewRecipe) {
   const db = await SQLite.openDatabaseAsync(dbName);
-  console.log('Database path:', db.databasePath);
+  
   try {
     // check to see if the tables exist
     await db.execAsync(`
