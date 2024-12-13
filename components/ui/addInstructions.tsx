@@ -100,7 +100,7 @@ export default function AddInstructions({ instructionsArr, setInstructionsArr, c
             /> :
             <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 60 }}>
               <Ionicons name="map" size={100} color="#ccc" />
-              <ThemedText style={{ color: '#ccc', textAlign: 'center' }}>{emptyArrayWords[Math.floor(Math.random() * emptyArrayWords.length)]}</ThemedText>
+              <ThemedText style={{ color: '#ccc', textAlign: 'center', marginTop: 4 }}>{emptyArrayWords[Math.floor(Math.random() * emptyArrayWords.length)]}</ThemedText>
             </View>
         }
 

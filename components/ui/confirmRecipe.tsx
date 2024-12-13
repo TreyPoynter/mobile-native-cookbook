@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { ThemedText } from "../ThemedText";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import TabSwitcher from "../TabSwitcher";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addRecipe } from "@/db/queries/recipes";
 
 type ConfirmRecipeProps = {
@@ -13,11 +13,29 @@ type ConfirmRecipeProps = {
 export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
 
   const [currSelectedTab, setCurrSelectedTab] = useState('Ingredients');
+  const [error, setError] = useState<React.JSX.Element | undefined>(undefined)
 
   async function onConfirmRecipe() {
-
     await addRecipe(newRecipe);
   }
+
+  useEffect(() => {
+    if (newRecipe.recipeTime == 0) {
+      setError(<ThemedText style={{ color: '#fff' }} type="defaultSemiBold">Recipe must have a time</ThemedText>);
+    }
+    else if (!newRecipe.timeUnits) {
+      setError(<ThemedText style={{ color: '#fff' }} type="defaultSemiBold">Recipe must have a time unit</ThemedText>);
+    }
+    else if (newRecipe.ingredients.length < 1) {
+      setError(<ThemedText style={{ color: '#fff' }} type="defaultSemiBold">Must have an ingredient</ThemedText>);
+    }
+    else {
+      setError(undefined)
+    }
+
+
+
+  }, [])
 
   function renderTabContent() {
     if (currSelectedTab == "Ingredients") {
@@ -25,7 +43,7 @@ export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
         newRecipe.ingredients.map((ingredient, i) => (
           <View style={styles.listItem} key={ingredient.id}>
             <ThemedText>{ingredient.name}</ThemedText>
-            <View style={{flexDirection: 'row', gap: 4}}>
+            <View style={{ flexDirection: 'row', gap: 4 }}>
               <ThemedText>{ingredient.amount}</ThemedText>
               <ThemedText>{ingredient?.unit}{(ingredient.amount || 1) > 1 ? 's' : ''}</ThemedText>
             </View>
@@ -59,9 +77,16 @@ export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
       {
         renderTabContent()
       }
-      <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onConfirmRecipe}>
+      <TouchableOpacity disabled={error != undefined} style={[
+        styles.addButton,
+        error && styles.errorAddStyle
+      ]} activeOpacity={0.8} onPress={onConfirmRecipe}>
         <FontAwesome6 name="book" size={24} color="white" />
-        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Add to Cookbook</ThemedText>
+        {
+          error ?
+            error :
+            <ThemedText style={{ color: '#fff' }} type="defaultSemiBold">Add to Cookbook</ThemedText>
+        }
       </TouchableOpacity>
     </ScrollView>
   );
@@ -96,6 +121,16 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: '#70b9be',
+    borderRadius: 8,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 10,
+    padding: 8,
+    marginTop: 16
+  },
+  errorAddStyle: {
+    backgroundColor: '#c25e5e',
     borderRadius: 8,
     display: 'flex',
     flexDirection: 'row',
