@@ -94,8 +94,8 @@ export async function addRecipe(recipe: NewRecipe) {
 
     // Commit the transaction
     await db.execAsync('COMMIT');
-    console.log(`Recipe "${recipe.recipeName ?? 'Undefined Recipe'}" added successfully`)
-    return `Recipe "${recipe.recipeName ?? 'Undefined Recipe'}" added successfully`;
+    console.log(`Recipe "${recipe.recipeName || 'Undefined Recipe'}" added successfully`)
+    return `Recipe "${recipe.recipeName || 'Undefined Recipe'}" added successfully`;
 
   } catch (error) {
     console.log(error)
