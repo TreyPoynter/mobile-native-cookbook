@@ -14,17 +14,17 @@ import ConfirmRecipe from '@/components/ui/confirmRecipe';
 
 export type NewIngredient = {
   id: number,
-  value?: number | undefined,
-  name?: string | undefined,
-  amount?: number,
-  unit?: string
+  value: number,
+  name: string,
+  amount: number,
+  unit: string
 }
 export type NewInstruction = {
   id: number,
   text?: string | null,
 }
 export type NewRecipe = {
-  recipeName: string,
+  recipeName: string | null,
   recipeTime: number,
   timeUnits: string
   baseServings: number,
@@ -48,10 +48,10 @@ export default function Add() {
     { component: <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients} ingredientDropDownData={ingredientDropdownData} setCurrCount={setCurrCount} currCount={currCount}/>, pageId: 'ingredients', entypoIcon: 'bowl' },
     { component: <AddInstructions instructionsArr={instructions} setInstructionsArr={setInstructions} currCount={currCount} setCurrCount={setCurrCount}/>, pageId: 'instructions', entypoIcon: 'clipboard' },
     { component: <ConfirmRecipe newRecipe={{
-      recipeName: recipeName,
-      recipeTime: recipeTime,
+      recipeName: recipeName || null,
+      recipeTime: parseInt(recipeTime.toString()),
       timeUnits: recipeTimeUnits,
-      baseServings: servings,
+      baseServings: parseInt(servings.toString()) || 1,
       ingredients: ingredients.filter(i => i.name),  // make sure there's no empty added fields
       instructions: instructions.filter(i => i.text)
     }}/>, pageId: 'step4', entypoIcon: 'flag' },

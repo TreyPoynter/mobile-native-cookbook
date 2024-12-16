@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   timeContainer: {
     flexDirection: 'row',
-    paddingTop: 5,
+    paddingTop: 3,
     gap: 8
   },
   listItem: {

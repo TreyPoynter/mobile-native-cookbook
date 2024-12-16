@@ -3,17 +3,20 @@ import { dbName } from "./ingredients";
 import { NewRecipe } from '@/app/(tabs)/add';
 
 export async function addRecipe(recipe: NewRecipe) {
-  const db = await SQLite.openDatabaseAsync(dbName);
+  const db = await SQLite.openDatabaseAsync('cookbookData.db');
+  const res = await db.execAsync('SELECT id from Ingredients');
+  console.log('WTF: ', res)
   
   try {
     // check to see if the tables exist
-    await db.execAsync(`
+    await db.execAsync('BEGIN TRANSACTION');
+    const creationDb = await db.execAsync(`
       CREATE TABLE IF NOT EXISTS "Recipes" (
         "id"	INTEGER,
         "name"	TEXT,
         "recipeTime"	INTEGER NOT NULL,
         "timeUnits"	TEXT NOT NULL,
-        "baseServings"	INTEGER NOT NULL,
+        "baseServings"	INTEGER DEFAULT 1,
         PRIMARY KEY("id" AUTOINCREMENT)
       );
 
@@ -40,41 +43,52 @@ export async function addRecipe(recipe: NewRecipe) {
         "quantity"	INTEGER NOT NULL,
         "unit"	TEXT,
         PRIMARY KEY("id" AUTOINCREMENT),
-        FOREIGN KEY("ingredientId") REFERENCES "",
+        FOREIGN KEY("ingredientId") REFERENCES "Ingredients"("id"),
         FOREIGN KEY("recipeId") REFERENCES "Recipes"("id")
       );
     `);
+    console.log('CREATE', creationDb)
 
-    await db.execAsync('BEGIN TRANSACTION');
+    
 
     // Step 1: Insert the recipe into the `Recipes` table
     const recipeResult = await db.runAsync(
-      'INSERT INTO Recipes (name, recipeTime, timeUnits, baseServings) VALUES (?, ?, ?, ?)',
-      recipe.recipeName,
-      recipe.recipeTime,
-      recipe.timeUnits,
-      recipe.baseServings ?? 1
+      'INSERT INTO Recipes (name, recipeTime, timeUnits, baseServings) VALUES (?, ?, ?, ?);',
+      [
+        recipe.recipeName,
+        recipe.recipeTime,
+        recipe.timeUnits,
+        recipe.baseServings
+      ]
     );
+    console.log('RECIPE INSERT RESULT', recipeResult)
     const recipeId = recipeResult.lastInsertRowId;
 
-    // Step 2: Insert instructions and their mapping into `Instructions` and `recipeInstructions` if theres anything
+    // Step 2: Insert instructions and their mapping into `Instructions` and `recipeInstructions` if there's anything
     if (recipe.instructions) {
       for (let i = 0; i < recipe.instructions.length; i++) {
         const instruction = recipe.instructions[i];
 
         // Insert the instruction
         const instructionResult = await db.runAsync(
-          'INSERT INTO Instructions (instruction) VALUES (?)',
-          instruction.text ?? ''
+          'INSERT INTO Instructions (instruction) VALUES (?);',
+          [
+            instruction.text || ''
+          ]
+
         );
+        console.log('INSTRUCT INSERT RESULT', instructionResult)
         const instructionId = instructionResult.lastInsertRowId;
 
         // Map the instruction to the recipe in the `recipeInstructions` join table
         await db.runAsync(
-          'INSERT INTO Recipe_Instructions (recipeId, instructionId, stepOrder) VALUES (?, ?, ?)',
-          recipeId,
-          instructionId,
-          i + 1
+          'INSERT INTO Recipe_Instructions (recipeId, instructionId, stepOrder) VALUES (?, ?, ?);',
+          [
+            recipeId,
+            instructionId,
+            i + 1
+          ]
+
         );
       }
     }
@@ -82,17 +96,27 @@ export async function addRecipe(recipe: NewRecipe) {
 
     // Step 3: Insert ingredient ids into the `recipeIngredients` table
     for (const ingredient of recipe.ingredients) {
-      await db.runAsync(
-        'INSERT INTO Recipe_Ingredients (recipeId, ingredientId, quantity, unit) VALUES (?, ?, ?, ?)',
-        recipeId,
-        ingredient.id,
-        ingredient.value ?? ``,
-        ingredient.unit ?? ''
+      const foundIngredient = await db.getFirstAsync('SELECT id FROM Ingredients WHERE id = ?;', [ingredient.value]);
+
+      if(!foundIngredient)  // data integrity
+        break;
+
+      console.log('FOUND INGREDIENT')
+
+      const ingredientResult = await db.runAsync(
+        'INSERT INTO Recipe_Ingredients (recipeId, ingredientId, quantity, unit) VALUES (?, ?, ?, ?);',
+        [
+          recipeId,
+          ingredient.value,
+          ingredient.amount,
+          ingredient.unit
+        ]
       );
-      console.log(ingredient)
+      console.log('INGREDIENT INSERT RESULT', ingredientResult)
     }
 
     // Commit the transaction
+    console.log('Committing transaction...');
     await db.execAsync('COMMIT');
     console.log(`Recipe "${recipe.recipeName || 'Undefined Recipe'}" added successfully`)
     return `Recipe "${recipe.recipeName || 'Undefined Recipe'}" added successfully`;
