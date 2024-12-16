@@ -16,7 +16,12 @@ export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
   const [error, setError] = useState<React.JSX.Element | undefined>(undefined)
 
   async function onConfirmRecipe() {
-    await addRecipe(newRecipe);
+    try {
+      const result = await addRecipe(newRecipe);
+      console.log('Recipe added successfully:', result);
+    } catch (error) {
+      console.error('Error adding recipe:', error);
+    }
   }
 
   useEffect(() => {

@@ -4,8 +4,6 @@ import { NewRecipe } from '@/app/(tabs)/add';
 
 export async function addRecipe(recipe: NewRecipe) {
   const db = await SQLite.openDatabaseAsync('cookbookData.db');
-  const res = await db.execAsync('SELECT id from Ingredients');
-  console.log('WTF: ', res)
   
   try {
     // check to see if the tables exist
@@ -61,7 +59,6 @@ export async function addRecipe(recipe: NewRecipe) {
         recipe.baseServings
       ]
     );
-    console.log('RECIPE INSERT RESULT', recipeResult)
     const recipeId = recipeResult.lastInsertRowId;
 
     // Step 2: Insert instructions and their mapping into `Instructions` and `recipeInstructions` if there's anything
