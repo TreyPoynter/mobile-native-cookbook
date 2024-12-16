@@ -2,6 +2,18 @@ import * as SQLite from 'expo-sqlite';
 import { dbName } from "./ingredients";
 import { NewRecipe } from '@/app/(tabs)/add';
 
+export async function getAllRecipes() {
+  try {
+      const db = await SQLite.openDatabaseAsync(dbName);
+  
+      const allRows = await db.getAllAsync('SELECT * FROM Recipes');
+      return allRows;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+}
+
 export async function addRecipe(recipe: NewRecipe) {
   const db = await SQLite.openDatabaseAsync('cookbookData.db');
   
@@ -85,7 +97,6 @@ export async function addRecipe(recipe: NewRecipe) {
             instructionId,
             i + 1
           ]
-
         );
       }
     }
@@ -97,8 +108,6 @@ export async function addRecipe(recipe: NewRecipe) {
 
       if(!foundIngredient)  // data integrity
         break;
-
-      console.log('FOUND INGREDIENT')
 
       const ingredientResult = await db.runAsync(
         'INSERT INTO Recipe_Ingredients (recipeId, ingredientId, quantity, unit) VALUES (?, ?, ?, ?);',
