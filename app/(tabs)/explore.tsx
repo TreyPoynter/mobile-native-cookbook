@@ -1,6 +1,6 @@
 import { StyleSheet, TouchableOpacity, View, FlatList, Image } from 'react-native';
 import { useEffect, useState } from 'react';
-import { getAllRecipes } from '@/db/queries/recipes';
+import { getAllRecipes, getRecipesByName } from '@/db/queries/recipes';
 import { ThemedText } from '@/components/ThemedText';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import ThemedTextbox from '@/components/ThemedTextbox';
@@ -8,30 +8,49 @@ import ThemedTextbox from '@/components/ThemedTextbox';
 export type Recipe = {
   id: number
   name?: string
-  recipeTime: number
-  timeUnits: string
-  baseServings: number
+  recipeTime?: number
+  timeUnits?: string
+  baseServings?: number
   imageUri?: string
 }
+
 
 export default function Explore() {
 
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [currentSearch, setCurrentSearch] = useState<string>('');
 
-
+  async function getRecipesOnLoad() {
+    const rows = await getAllRecipes();
+    setRecipes((rows as Recipe[]));
+  }
 
   useEffect(() => {
-    async function getRecipesOnLoad() {
-      const rows = await getAllRecipes();
-      setRecipes((rows as Recipe[]));
-    }
-
+  
     getRecipesOnLoad();
 
   }, []);
 
+  useEffect(() => {
+    if(!currentSearch || currentSearch == '')
+      getRecipesOnLoad();
+
+    async function getSearchedRecipes() {
+      const searched = await getRecipesByName(currentSearch);
+      setRecipes((searched as Recipe[]))
+    }
+console.log(currentSearch)
+    getSearchedRecipes();
+  }, [currentSearch])
+
   function RecipeCard({ item, isLeft = false }: { item: any, isLeft?: boolean }) {
     const recipe = item as Recipe;
+
+    switch (recipe.timeUnits) {
+      case 'Minutes':
+        recipe.timeUnits = 'Min'
+        break;
+    }
 
     return (
         <TouchableOpacity activeOpacity={0.7} style={[styles.recipeCard, isLeft && styles.leftColumnMargin]}>
@@ -39,17 +58,17 @@ export default function Explore() {
             source={recipe.imageUri ? { uri: recipe.imageUri } : require('../../assets/images/recipe-image-placehodler.png')}
             style={styles.recipeImage}
           />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{alignItems: 'flex-start'}}>
             <ThemedText style={styles.recipeName}>
               {recipe.name || 'Untitled Dish'}
             </ThemedText>
-            <View style={styles.timeContainer}>
+          </View>
+          <View style={styles.timeContainer}>
               <FontAwesome6 name="clock" size={12} color="#7c8990" />
               <ThemedText style={styles.recipeTime}>
                 {recipe.recipeTime} {recipe.timeUnits}
               </ThemedText>
             </View>
-          </View>
         </TouchableOpacity>
 
     );
@@ -70,7 +89,7 @@ export default function Explore() {
             <FontAwesome6 name="utensils" size={18} color='#7c8990' />
             <ThemedText>{recipes.length}</ThemedText>
           </View>
-          <ThemedTextbox placeholder='Search Recipes...' styles={styles.text} />
+          <ThemedTextbox onTextChange={setCurrentSearch} placeholder='Search Recipes...' styles={styles.text} />
         </View>
       </View>
       <View>
@@ -119,6 +138,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   recipeCard: {
+    padding: 10,
     borderColor: '#E6EBF2',
     borderWidth: 1,
     borderRadius: 16,
@@ -135,20 +155,21 @@ const styles = StyleSheet.create({
   recipeImage: {
     width: '100%',
     height: 100,
+    borderRadius: 16,
     resizeMode: 'cover',
+    marginBottom: 5,
   },
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
     gap: 5
   },
   recipeTime: {
     textAlign: 'center',
     fontSize: 12,
+    color: '#7c8990'
   },
   recipeName: {
-    padding: 10,
     textAlign: 'center',
     fontSize: 12,
     fontWeight: 'bold',

@@ -4,19 +4,35 @@ import { NewRecipe } from '@/app/(tabs)/add';
 
 export async function getAllRecipes() {
   try {
-      const db = await SQLite.openDatabaseAsync(dbName);
-  
-      const allRows = await db.getAllAsync('SELECT * FROM Recipes');
-      return allRows;
-    } catch (error) {
-      console.log(error);
-      return [];
-    }
+    const db = await SQLite.openDatabaseAsync(dbName);
+
+    const allRows = await db.getAllAsync('SELECT id, name, recipeTime, timeUnits, imageUri FROM Recipes');
+    return allRows;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+
+export async function getRecipesByName(name: string) {
+  if (!name)
+    return [];
+
+  try {
+    const db = await SQLite.openDatabaseAsync(dbName);
+
+    const allRows = await db.getAllAsync(`SELECT id, name, recipeTime, timeUnits, imageUri FROM Recipes WHERE name LIKE \'%${name}%\'`);
+    return allRows;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+
 }
 
 export async function addRecipe(recipe: NewRecipe) {
   const db = await SQLite.openDatabaseAsync('cookbookData.db');
-  
+
   try {
     // check to see if the tables exist
     await db.execAsync('BEGIN TRANSACTION');
@@ -61,7 +77,7 @@ export async function addRecipe(recipe: NewRecipe) {
     `);
     console.log('CREATE', creationDb)
 
-    
+
 
     // Step 1: Insert the recipe into the `Recipes` table
     const recipeResult = await db.runAsync(
@@ -109,7 +125,7 @@ export async function addRecipe(recipe: NewRecipe) {
     for (const ingredient of recipe.ingredients) {
       const foundIngredient = await db.getFirstAsync('SELECT id FROM Ingredients WHERE id = ?;', [ingredient.value]);
 
-      if(!foundIngredient)  // data integrity
+      if (!foundIngredient)  // data integrity
         break;
 
       const ingredientResult = await db.runAsync(

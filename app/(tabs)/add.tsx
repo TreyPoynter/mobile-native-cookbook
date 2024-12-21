@@ -99,14 +99,19 @@ export default function Add() {
             right: 20,
           }}
         />
-        <Image
-          style={styles.image}
-          source={
-            displayedImage
-              ? { uri: displayedImage }
-              : require('../../assets/images/recipe-image-placehodler.png')
-          }
-        />
+        {
+          photoUri ?
+            <Image
+              style={styles.image}
+              source={{ uri: displayedImage || '' }}
+            /> :
+            <Image
+              style={styles.image}
+              source={require('../../assets/images/recipe-image-placehodler.png')}
+            />
+
+        }
+
       </View>
 
       <View style={styles.moduleContainer}>
