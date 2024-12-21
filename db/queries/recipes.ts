@@ -31,6 +31,7 @@ export async function addRecipe(recipe: NewRecipe) {
         PRIMARY KEY("id" AUTOINCREMENT)
       );
 
+
       CREATE TABLE IF NOT EXISTS "Instructions" (
 	      "id"	INTEGER,
 	      "instruction"	TEXT NOT NULL,

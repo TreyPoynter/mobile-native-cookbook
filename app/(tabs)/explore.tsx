@@ -8,10 +8,10 @@ import ThemedTextbox from '@/components/ThemedTextbox';
 export type Recipe = {
   id: number
   name?: string
-  image?: string
   recipeTime: number
   timeUnits: string
   baseServings: number
+  imageUri?: string
 }
 
 export default function Explore() {
@@ -30,34 +30,35 @@ export default function Explore() {
 
   }, []);
 
-  function RecipeCard({ item, isLeft = false, isLast = false }: { item: any, isLeft?: boolean, isLast?: boolean }) {
+  function RecipeCard({ item, isLeft = false }: { item: any, isLeft?: boolean }) {
     const recipe = item as Recipe;
 
     return (
-      <TouchableOpacity activeOpacity={0.7} style={[styles.recipeCard, isLeft && styles.leftColumnMargin, isLast && styles.lastItem]}>
-        <Image
-          source={recipe.image ? { uri: recipe.image } : require('../../assets/images/recipe-image-placehodler.png')}
-          style={styles.recipeImage}
-        />
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <ThemedText style={styles.recipeName}>
-            {recipe.name || 'Untitled Dish'}
-          </ThemedText>
-          <View style={styles.timeContainer}>
-            <FontAwesome6 name="clock" size={12} color="#7c8990" />
-            <ThemedText style={styles.recipeTime}>
-              {recipe.recipeTime} {recipe.timeUnits}
+        <TouchableOpacity activeOpacity={0.7} style={[styles.recipeCard, isLeft && styles.leftColumnMargin]}>
+          <Image
+            source={recipe.imageUri ? { uri: recipe.imageUri } : require('../../assets/images/recipe-image-placehodler.png')}
+            style={styles.recipeImage}
+          />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <ThemedText style={styles.recipeName}>
+              {recipe.name || 'Untitled Dish'}
             </ThemedText>
+            <View style={styles.timeContainer}>
+              <FontAwesome6 name="clock" size={12} color="#7c8990" />
+              <ThemedText style={styles.recipeTime}>
+                {recipe.recipeTime} {recipe.timeUnits}
+              </ThemedText>
+            </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+
     );
   }
 
 
   function renderItem({ item, index }: { item: Recipe, index: number }) {
-    const isLeftColumn = index % 2 === 0 && index+1 != recipes.length;
-    return <RecipeCard item={item} isLeft={isLeftColumn} isLast={index+1 == recipes.length}/>;
+    const isLeftColumn = index % 2 === 0 && index + 1 != recipes.length;
+    return <RecipeCard item={item} isLeft={isLeftColumn} />;
   }
 
 
@@ -76,7 +77,7 @@ export default function Explore() {
         {
           recipes.length > 0 ?
             <FlatList
-              style={{ paddingTop: 20 }}
+              contentContainerStyle={{ paddingBottom: 160, paddingTop: 20 }}
               data={recipes}
               numColumns={2}
               renderItem={renderItem}
@@ -138,13 +139,13 @@ const styles = StyleSheet.create({
   },
   timeContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    padding: 10,
+    gap: 5
   },
   recipeTime: {
-    padding: 10,
     textAlign: 'center',
     fontSize: 12,
-    gap: 8
   },
   recipeName: {
     padding: 10,
@@ -155,7 +156,4 @@ const styles = StyleSheet.create({
   leftColumnMargin: {
     marginRight: 10,
   },
-  lastItem: {
-    marginBottom: 180
-  }
 })

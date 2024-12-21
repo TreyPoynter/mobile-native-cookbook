@@ -98,7 +98,6 @@ export default function Add() {
             top: 30,
             right: 20,
           }}
-          buttonText="Upload Image"
         />
         <Image
           style={styles.image}
