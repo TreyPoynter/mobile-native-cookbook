@@ -27,6 +27,7 @@ export async function addRecipe(recipe: NewRecipe) {
         "recipeTime"	INTEGER NOT NULL,
         "timeUnits"	TEXT NOT NULL,
         "baseServings"	INTEGER DEFAULT 1,
+        "imageUri"	TEXT,
         PRIMARY KEY("id" AUTOINCREMENT)
       );
 
@@ -63,12 +64,13 @@ export async function addRecipe(recipe: NewRecipe) {
 
     // Step 1: Insert the recipe into the `Recipes` table
     const recipeResult = await db.runAsync(
-      'INSERT INTO Recipes (name, recipeTime, timeUnits, baseServings) VALUES (?, ?, ?, ?);',
+      'INSERT INTO Recipes (name, recipeTime, timeUnits, baseServings, imageUri) VALUES (?, ?, ?, ?, ?);',
       [
         recipe.recipeName,
         recipe.recipeTime,
         recipe.timeUnits,
-        recipe.baseServings
+        recipe.baseServings,
+        recipe.imageUri || null
       ]
     );
     const recipeId = recipeResult.lastInsertRowId;

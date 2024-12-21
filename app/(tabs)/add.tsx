@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import ThemedTextbox from '@/components/ThemedTextbox';
-import TabSwitcher from '@/components/TabSwitcher';
 import AddBasicInfo from '@/components/ui/addBasicInfo';
 import AddIngredients from '../../components/ui/addIngredients';
 import AddInstructions from '../../components/ui/addInstructions';
 import { getIngredients } from '@/db/queries/ingredients';
 import ProgressTracker from '@/components/ui/ProgressTracker';
 import { ProgressTrackerPage } from '@/components/ui/ProgressTracker';
-import { Text } from 'react-native';
 import ConfirmRecipe from '@/components/ui/confirmRecipe';
+import PhotoButton from '@/components/PhotoButton';
 
 export type NewIngredient = {
   id: number,
@@ -30,6 +28,7 @@ export type NewRecipe = {
   baseServings: number,
   ingredients: NewIngredient[]
   instructions?: NewInstruction[]
+  imageUri?: string | null
 }
 
 export default function Add() {
@@ -42,20 +41,34 @@ export default function Add() {
   const [instructions, setInstructions] = useState<NewInstruction[]>([]);
   const [ingredientDropdownData, setIngredientDropdownData] = useState<any>([]);
   const [currCount, setCurrCount] = useState(0);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [displayedImage, setDisplayedImage] = useState<string | null>(null);
 
   const pages: ProgressTrackerPage[] = [
-    { component: <AddBasicInfo recipeTitle={recipeName} setRecipeTitle={setRecipeName} recipeTime={recipeTime} setRecipeTime={setRecipeTime} servings={servings} setServings={setServings} recipeTimeUnits={recipeTimeUnits} setRecipeTimeUnits={setRecipeTimeUnits}/>, pageId: 'basic', entypoIcon: 'info' },
-    { component: <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients} ingredientDropDownData={ingredientDropdownData} setCurrCount={setCurrCount} currCount={currCount}/>, pageId: 'ingredients', entypoIcon: 'bowl' },
-    { component: <AddInstructions instructionsArr={instructions} setInstructionsArr={setInstructions} currCount={currCount} setCurrCount={setCurrCount}/>, pageId: 'instructions', entypoIcon: 'clipboard' },
-    { component: <ConfirmRecipe newRecipe={{
-      recipeName: recipeName || null,
-      recipeTime: parseInt(recipeTime.toString()),
-      timeUnits: recipeTimeUnits,
-      baseServings: parseInt(servings.toString()) || 1,
-      ingredients: ingredients.filter(i => i.name),  // make sure there's no empty added fields
-      instructions: instructions.filter(i => i.text)
-    }}/>, pageId: 'step4', entypoIcon: 'flag' },
+    { component: <AddBasicInfo recipeTitle={recipeName} setRecipeTitle={setRecipeName} recipeTime={recipeTime} setRecipeTime={setRecipeTime} servings={servings} setServings={setServings} recipeTimeUnits={recipeTimeUnits} setRecipeTimeUnits={setRecipeTimeUnits} />, pageId: 'basic', entypoIcon: 'info' },
+    { component: <AddIngredients ingredientsArr={ingredients} setIngredientsArr={setIngredients} ingredientDropDownData={ingredientDropdownData} setCurrCount={setCurrCount} currCount={currCount} />, pageId: 'ingredients', entypoIcon: 'bowl' },
+    { component: <AddInstructions instructionsArr={instructions} setInstructionsArr={setInstructions} currCount={currCount} setCurrCount={setCurrCount} />, pageId: 'instructions', entypoIcon: 'clipboard' },
+    {
+      component: <ConfirmRecipe newRecipe={{
+        recipeName: recipeName || null,
+        recipeTime: parseInt(recipeTime.toString()),
+        timeUnits: recipeTimeUnits,
+        baseServings: parseInt(servings.toString()) || 1,
+        ingredients: ingredients.filter(i => i.name),  // make sure there's no empty added fields
+        instructions: instructions.filter(i => i.text),
+        imageUri: photoUri
+      }} />, pageId: 'step4', entypoIcon: 'flag'
+    },
   ];
+
+  useEffect(() => {
+    // Update the displayed image when photoUri changes
+    if (photoUri) {
+      setDisplayedImage(photoUri);
+    } else {
+      setDisplayedImage('../../assets/images/recipe-image-placehodler.png'); // Fallback placeholder
+    }
+  }, [photoUri]);
 
   useEffect(() => {
     async function setIngredientsHook() {
@@ -63,7 +76,7 @@ export default function Add() {
       const formattedData = ingredientsDbData.map((item: any) => ({  // so the themed dropdown can render/search it
         label: item.name,
         value: item.id,
-        
+
       }));
       setIngredientDropdownData(formattedData);
     }
@@ -78,9 +91,22 @@ export default function Add() {
           colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']}
           style={styles.gradient}
         />
+        <PhotoButton
+          onPhotoSelected={(uri: string) => setPhotoUri(uri)}
+          style={{
+            position: 'absolute',
+            top: 30,
+            right: 20,
+          }}
+          buttonText="Upload Image"
+        />
         <Image
           style={styles.image}
-          source={require('../../assets/images/recipe-image-placehodler.png')}
+          source={
+            displayedImage
+              ? { uri: displayedImage }
+              : require('../../assets/images/recipe-image-placehodler.png')
+          }
         />
       </View>
 
