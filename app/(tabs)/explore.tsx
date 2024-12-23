@@ -39,7 +39,7 @@ export default function Explore() {
       const searched = await getRecipesByName(currentSearch);
       setRecipes((searched as Recipe[]))
     }
-console.log(currentSearch)
+    
     getSearchedRecipes();
   }, [currentSearch])
 
@@ -52,8 +52,12 @@ console.log(currentSearch)
         break;
     }
 
+    function onCardPress(id: number) {
+      console.log(id)
+    }
+
     return (
-        <TouchableOpacity activeOpacity={0.7} style={[styles.recipeCard, isLeft && styles.leftColumnMargin]}>
+        <TouchableOpacity onPress={() => onCardPress(recipe.id)} activeOpacity={0.7} style={[styles.recipeCard, isLeft && styles.leftColumnMargin]}>
           <Image
             source={recipe.imageUri ? { uri: recipe.imageUri } : require('../../assets/images/recipe-image-placehodler.png')}
             style={styles.recipeImage}
