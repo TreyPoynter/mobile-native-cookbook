@@ -4,6 +4,7 @@ import { getAllRecipes, getRecipesByName } from '@/db/queries/recipes';
 import { ThemedText } from '@/components/ThemedText';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import ThemedTextbox from '@/components/ThemedTextbox';
+import RecipeModal from '@/components/RecipeModal';
 
 export type Recipe = {
   id: number
@@ -19,6 +20,8 @@ export default function Explore() {
 
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [currentSearch, setCurrentSearch] = useState<string>('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [recipeId, setRecipeId] = useState<number | null>(null);
 
   async function getRecipesOnLoad() {
     const rows = await getAllRecipes();
@@ -26,20 +29,20 @@ export default function Explore() {
   }
 
   useEffect(() => {
-  
+
     getRecipesOnLoad();
 
   }, []);
 
   useEffect(() => {
-    if(!currentSearch || currentSearch == '')
+    if (!currentSearch || currentSearch == '')
       getRecipesOnLoad();
 
     async function getSearchedRecipes() {
       const searched = await getRecipesByName(currentSearch);
       setRecipes((searched as Recipe[]))
     }
-    
+
     getSearchedRecipes();
   }, [currentSearch])
 
@@ -53,35 +56,40 @@ export default function Explore() {
     }
 
     function onCardPress(id: number) {
-      console.log(id)
+      setModalVisible(true);
+      setRecipeId(id);
     }
 
     return (
-        <TouchableOpacity onPress={() => onCardPress(recipe.id)} activeOpacity={0.7} style={[styles.recipeCard, isLeft && styles.leftColumnMargin]}>
-          <Image
-            source={recipe.imageUri ? { uri: recipe.imageUri } : require('../../assets/images/recipe-image-placehodler.png')}
-            style={styles.recipeImage}
-          />
-          <View style={{alignItems: 'flex-start'}}>
-            <ThemedText style={styles.recipeName}>
-              {recipe.name || 'Untitled Dish'}
-            </ThemedText>
-          </View>
-          <View style={styles.timeContainer}>
-              <FontAwesome6 name="clock" size={12} color="#7c8990" />
-              <ThemedText style={styles.recipeTime}>
-                {recipe.recipeTime} {recipe.timeUnits}
-              </ThemedText>
-            </View>
-        </TouchableOpacity>
+      <TouchableOpacity onPress={() => onCardPress(recipe.id)} activeOpacity={0.7} style={[styles.recipeCard, isLeft && styles.leftColumnMargin]}>
+        <Image
+          source={recipe.imageUri ? { uri: recipe.imageUri } : require('../../assets/images/recipe-image-placehodler.png')}
+          style={styles.recipeImage}
+        />
+        <View style={{ alignItems: 'flex-start' }}>
+          <ThemedText style={styles.recipeName}>
+            {recipe.name || 'Untitled Dish'}
+          </ThemedText>
+        </View>
+        <View style={styles.timeContainer}>
+          <FontAwesome6 name="clock" size={12} color="#7c8990" />
+          <ThemedText style={styles.recipeTime}>
+            {recipe.recipeTime} {recipe.timeUnits}
+          </ThemedText>
+        </View>
+      </TouchableOpacity>
 
     );
   }
 
 
   function renderItem({ item, index }: { item: Recipe, index: number }) {
-    const isLeftColumn = index % 2 === 0 && index + 1 != recipes.length;
-    return <RecipeCard item={item} isLeft={isLeftColumn} />;
+    const isLeftColumn = index % 2 === 0;
+    return (
+      <View style={{ flex: 1 / 2 }}>
+        <RecipeCard item={item} isLeft={isLeftColumn} />
+      </View>
+    );
   }
 
 
@@ -112,6 +120,11 @@ export default function Explore() {
             </View>
         }
       </View>
+      <RecipeModal
+        recipeId={recipeId}
+        modalVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      />
     </View>
   );
 }

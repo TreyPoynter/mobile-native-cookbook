@@ -14,6 +14,20 @@ export async function getAllRecipes() {
   }
 }
 
+export async function getRecipeById(id: number) {
+  if (!id)
+    return null;
+
+  try {
+    const db = await SQLite.openDatabaseAsync(dbName);
+
+    const entity = await db.getFirstAsync(`SELECT * FROM Recipes WHERE id = ${id}`);
+    return entity;
+  } catch (error) {
+    return null;
+  }
+}
+
 export async function getRecipesByName(name: string) {
   if (!name)
     return [];
@@ -27,7 +41,6 @@ export async function getRecipesByName(name: string) {
     console.log(error);
     return [];
   }
-
 }
 
 export async function addRecipe(recipe: NewRecipe) {
