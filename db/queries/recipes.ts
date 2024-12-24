@@ -1,17 +1,18 @@
 import * as SQLite from 'expo-sqlite';
 import { dbName } from "./ingredients";
-import { NewIngredient, NewRecipe } from '@/app/(tabs)/add';
+import { NewRecipe } from '@/app/(tabs)/add';
 
 const unitToGrams = {
-  gram: 1, // Gram is already the base unit
+  gram: 1, // Base unit
   kilogram: 1000, // 1 kilogram = 1000 grams
-  milliliter: 1, // Assuming density of water (1mL = 1g); adjust for other liquids if needed
-  liter: 1000, // Assuming density of water (1L = 1000g)
+  milliliter: 1, // Approximate for water-based liquids
+  liter: 1000, // Approximate for water-based liquids
   ounce: 28.3495, // 1 ounce = 28.3495 grams
-  cup: 240,
-  tsp: 4.92892,
-  piece: 1,
-  unit: 1,
+  cup: 200, // General average for most ingredients
+  tsp: 5, // Approximation for dry and liquid ingredients
+  tbsp: 15, // 1 tbsp = 3 tsp
+  piece: 50, // Assumed for medium-sized items (like fruits or vegetables)
+  unit: 1, // Fallback for abstract units
 };
 
 
@@ -56,9 +57,10 @@ export async function getRecipeById(id: number) {
     let totalProteins = 0;
     let totalFats = 0;
     const ingredientsWithGrams = ingredients.map((ingredient: any) => {
+      console.log(`${ingredient.quantity}${ingredient.unit}`)
       // Convert quantity to grams
       const quantityInGrams = convertToGrams(ingredient.quantity, ingredient.unit);
-      console.log(ingredient)
+      console.log(`QIG - ${quantityInGrams}`);
 
       const ingredientCarbs = (quantityInGrams / 100) * ingredient.carbs;
       const ingredientProteins = (quantityInGrams / 100) * ingredient.protein;
