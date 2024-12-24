@@ -99,7 +99,6 @@ export default function ConfirmRecipe({ newRecipe }: ConfirmRecipeProps) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 30,
     paddingVertical: 10,
     marginBottom: 130
   },
