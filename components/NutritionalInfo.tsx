@@ -3,7 +3,7 @@ import { ThemedText } from "./ThemedText";
 
 type NutritionalInfoProps = {
   icon: any;
-  value: number;
+  value: string;
   nutritionalValue: "carbs" | "proteins" | "Kcal" | "fats" | "fiber" | "sugar";
 };
 

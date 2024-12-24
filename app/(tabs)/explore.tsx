@@ -15,6 +15,10 @@ export type Recipe = {
   imageUri?: string
   ingredients: any[]
   instructions: any[]
+  kCal: number
+  carbs: number
+  fats: number
+  proteins: number
 }
 
 

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, StyleSheet, Pressable, View, Animated, ScrollView } from 'react-native';
+import { Modal, StyleSheet, Pressable, View, Animated, ScrollView, TouchableOpacity } from 'react-native';
 import { Recipe } from '@/app/(tabs)/explore';
 import { getRecipeById } from '@/db/queries/recipes';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { AntDesign } from '@expo/vector-icons';
 import { ThemedText } from './ThemedText';
 import TabSwitcher from './TabSwitcher';
 import NutritionalInfo from './NutritionalInfo';
@@ -42,7 +43,7 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
 
   const imageTranslateY = scrollY.interpolate({
     inputRange: [-200, 0, 200],
-    outputRange: [-50, 0, 0], // Move the image slightly upwards when scrolling up
+    outputRange: [-50, 0, -50], // Move the image slightly upwards when scrolling up / down
     extrapolate: 'clamp',
   });
 
@@ -113,6 +114,11 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
           <FontAwesome6 name="xmark" size={24} color="white" />
         </Pressable>
 
+        {/* Like Button */}
+        <Pressable style={styles.heartButton} onPress={onClose}>
+          <AntDesign name="hearto" size={24} color="white" />
+        </Pressable>
+
         {/* Scrollable Content */}
         <ScrollView
           contentContainerStyle={styles.scrollContent}
@@ -137,14 +143,14 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
                 <View style={styles.nutritionalItem}>
                   <NutritionalInfo
                     icon={<FontAwesome6 name="bread-slice" size={24} color="#0A2533" />}
-                    value={4}
+                    value={`${currRecipe?.carbs}g`}
                     nutritionalValue="carbs"
                   />
                 </View>
                 <View style={styles.nutritionalItem}>
                   <NutritionalInfo
                     icon={<FontAwesome6 name="egg" size={24} color="#0A2533" />}
-                    value={4}
+                    value={`${currRecipe?.proteins}g`}
                     nutritionalValue="proteins"
                   />
                 </View>
@@ -153,14 +159,14 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
                 <View style={styles.nutritionalItem}>
                   <NutritionalInfo
                     icon={<FontAwesome6 name="fire" size={24} color="#0A2533" />}
-                    value={4}
+                    value={`${currRecipe?.kCal}`}
                     nutritionalValue="Kcal"
                   />
                 </View>
                 <View style={styles.nutritionalItem}>
                   <NutritionalInfo
                     icon={<FontAwesome6 name="pizza-slice" size={24} color="#0A2533" />}
-                    value={4}
+                    value={`${currRecipe?.fats}g`}
                     nutritionalValue="fats"
                   />
                 </View>
@@ -168,6 +174,14 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
             </View>
 
             <TabSwitcher tab1='Ingredients' tab2='Instructions' onTab1Click={() => setCurrTab('Ingredients')} onTab2Click={() => setCurrTab('Instructions')} />
+            {currTab === 'Ingredients' ? (
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', 'alignItems': 'center'}}>
+                <ThemedText style={{marginBottom: 3}}>{currRecipe?.ingredients.length} Item{currRecipe?.ingredients.length || 0 < 2 ? '' : 's'}</ThemedText>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => console.log('Add to Cart pressed')}>
+                  <ThemedText style={{color: '#70b9be', fontWeight: 600}}>Add All to Cart</ThemedText>
+                </TouchableOpacity>
+              </View>
+            ) : null}
             {
               renderTabContent()
             }
@@ -245,13 +259,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 2,
   },
+  heartButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    backgroundColor: '#70b9be',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+  },
   listItem: {
     borderColor: '#E6EBF2',
     borderWidth: 1,
     borderRadius: 16,
     paddingVertical: 10,
     paddingHorizontal: 10,
-    marginTop: 8,
+    marginBottom: 8,
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
@@ -267,6 +293,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   nutritionalItem: {
-    width: "65%", // Ensure consistent width for items
+    width: "57%", // Ensure consistent width for items
   },
 });

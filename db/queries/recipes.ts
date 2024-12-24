@@ -1,6 +1,23 @@
 import * as SQLite from 'expo-sqlite';
 import { dbName } from "./ingredients";
-import { NewRecipe } from '@/app/(tabs)/add';
+import { NewIngredient, NewRecipe } from '@/app/(tabs)/add';
+
+const unitToGrams = {
+  gram: 1, // Gram is already the base unit
+  kilogram: 1000, // 1 kilogram = 1000 grams
+  milliliter: 1, // Assuming density of water (1mL = 1g); adjust for other liquids if needed
+  liter: 1000, // Assuming density of water (1L = 1000g)
+  ounce: 28.3495, // 1 ounce = 28.3495 grams
+  cup: 240,
+  tsp: 4.92892,
+  piece: 1,
+  unit: 1,
+};
+
+
+export const convertToGrams = (quantity: number, unit: string) => {
+  return quantity * (unitToGrams[unit] || 1); // Default to grams if unit is missing
+};
 
 export async function getAllRecipes() {
   try {
@@ -26,11 +43,44 @@ export async function getRecipeById(id: number) {
 
     // Fetch the ingredients associated with the recipe
     const ingredients = await db.getAllAsync(`
-      SELECT i.* 
+      SELECT i.*, ri.unit, ri.quantity
       FROM Ingredients i
       JOIN Recipe_Ingredients ri ON i.id = ri.ingredientId
       WHERE ri.recipeId = ${id}
     `);
+
+
+    // Convert each ingredient to grams and calculate total kCal
+    let totalKCal = 0;
+    let totalCarbs = 0;
+    let totalProteins = 0;
+    let totalFats = 0;
+    const ingredientsWithGrams = ingredients.map((ingredient: any) => {
+      // Convert quantity to grams
+      const quantityInGrams = convertToGrams(ingredient.quantity, ingredient.unit);
+      console.log(ingredient)
+
+      const ingredientCarbs = (quantityInGrams / 100) * ingredient.carbs;
+      const ingredientProteins = (quantityInGrams / 100) * ingredient.protein;
+      const ingredientFats = (quantityInGrams / 100) * ingredient.fat;
+      const ingredientKCal = (quantityInGrams / 100) * ingredient.kCal;
+
+      // Accumulate totals
+      totalCarbs += ingredientCarbs;
+      totalProteins += ingredientProteins;
+      totalFats += ingredientFats;
+      totalKCal += ingredientKCal;
+
+      // Return the updated ingredient object
+      return {
+        ...ingredient,
+        quantityInGrams,
+        ingredientCarbs: ingredientCarbs.toFixed(2),
+        ingredientProteins: ingredientProteins.toFixed(2),
+        ingredientFats: ingredientFats.toFixed(2),
+        ingredientKCal: ingredientKCal.toFixed(2),
+      };
+    });
 
     // Fetch the instructions associated with the recipe
     const instructions = await db.getAllAsync(`
@@ -41,10 +91,16 @@ export async function getRecipeById(id: number) {
       ORDER BY ri.stepOrder
     `);
 
+    console.log(totalProteins)
+
     return {
       ...recipe,
       ingredients: ingredients,
       instructions: instructions,
+      carbs: totalCarbs.toFixed(0),
+      proteins: totalProteins.toFixed(0),
+      fats: totalFats.toFixed(0),
+      kCal: totalKCal.toFixed(0),
     };
   } catch (error) {
     console.error('Error fetching recipe:', error);
