@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Modal, StyleSheet, Text, Pressable, View, Animated, ScrollView } from 'react-native';
+import { Modal, StyleSheet, Pressable, View, Animated, ScrollView } from 'react-native';
 import { Recipe } from '@/app/(tabs)/explore';
 import { getRecipeById } from '@/db/queries/recipes';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { ThemedText } from './ThemedText';
+import TabSwitcher from './TabSwitcher';
 
 type RecipeModalProps = {
   modalVisible: boolean;
@@ -13,6 +15,7 @@ type RecipeModalProps = {
 
 export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeModalProps) {
   const [currRecipe, setCurrRecipe] = useState<Recipe>();
+  const [currTab, setCurrTab] = useState('Ingredients');
   const scrollY = new Animated.Value(0);
 
   useEffect(() => {
@@ -21,8 +24,14 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
       setCurrRecipe(foundRecipe as Recipe);
     }
 
-    if (recipeId) findRecipeById();
+    if (recipeId) 
+      findRecipeById();
+    
   }, [recipeId]);
+
+  useEffect(() => {
+    setCurrTab('Ingredients')
+  }, [modalVisible])
 
   const imageHeight = scrollY.interpolate({
     inputRange: [-200, 0, 200],
@@ -41,6 +50,29 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
     { useNativeDriver: false } // Layout animations are not supported with native driver
   );
 
+  function renderTabContent() {
+    if (currTab == "Ingredients") {
+      return (
+        currRecipe?.ingredients.map((ingredient, i) => (
+          <View style={styles.listItem} key={ingredient.id}>
+            <ThemedText>{ingredient.name}</ThemedText>
+            <View style={{ flexDirection: 'row', gap: 4 }}>
+              <ThemedText>{ingredient.amount}</ThemedText>
+              <ThemedText>{ingredient?.unit}{(ingredient.amount || 1) > 1 ? 's' : ''}</ThemedText>
+            </View>
+          </View>
+        ))
+      );
+    }
+    return (
+      currRecipe?.instructions?.map((instruct, i) => (
+        <View key={instruct.id} style={[styles.listItem, { minHeight: 80 }]}>
+          <ThemedText>{instruct.text}</ThemedText>
+        </View>
+      ))
+    );
+  }
+
   return (
     <Modal
       animationType="slide"
@@ -56,7 +88,7 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
           colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']}
           style={styles.gradient}
         />
-        {currRecipe?.imageUri && (
+        {currRecipe?.imageUri ?
           <Animated.Image
             source={{ uri: currRecipe.imageUri }}
             style={[
@@ -64,8 +96,16 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
               { height: imageHeight, transform: [{ translateY: imageTranslateY }] },
             ]}
             resizeMode="cover"
+          /> :
+          <Animated.Image
+            source={{ uri: require('../assets/images/recipe-image-placehodler.png') }}
+            style={[
+              styles.backgroundImage,
+              { height: imageHeight, transform: [{ translateY: imageTranslateY }] },
+            ]}
+            resizeMode="cover"
           />
-        )}
+        }
 
         {/* Close Button */}
         <Pressable style={styles.closeButton} onPress={onClose}>
@@ -80,9 +120,21 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
         >
           {/* Content with White Background */}
           <View style={styles.contentContainer}>
-            <Text style={styles.recipeTitle}>
-              {currRecipe?.name || 'No Recipe Selected'}
-            </Text>
+            <View style={styles.titleContainer}>
+              <ThemedText style={styles.recipeTitle}>
+                {currRecipe?.name || 'Unnamed Dish'}
+              </ThemedText>
+              <View style={styles.timeContainer}>
+                <FontAwesome6 name="clock" size={12} color="#7c8990" />
+                <ThemedText style={styles.recipeTime}>
+                  {currRecipe?.recipeTime} {currRecipe?.timeUnits}
+                </ThemedText>
+              </View>
+            </View>
+            <TabSwitcher tab1='Ingredients' tab2='Instructions' onTab1Click={() => setCurrTab('Ingredients')} onTab2Click={() => setCurrTab('Instructions')} />
+            {
+              renderTabContent()
+            }
           </View>
         </ScrollView>
       </View>
@@ -120,10 +172,24 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 20,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    gap: 5
+  },
+  recipeTime: {
+    textAlign: 'center',
+    color: '#7c8990'
+  },
   recipeTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
     marginBottom: 10,
   },
   recipeDescription: {
@@ -143,5 +209,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 2,
+  },
+  listItem: {
+    borderColor: '#E6EBF2',
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
 });

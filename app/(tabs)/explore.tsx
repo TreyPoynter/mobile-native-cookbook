@@ -13,6 +13,8 @@ export type Recipe = {
   timeUnits?: string
   baseServings?: number
   imageUri?: string
+  ingredients: any[]
+  instructions: any[]
 }
 
 
@@ -121,7 +123,7 @@ export default function Explore() {
         }
       </View>
       <RecipeModal
-        recipeId={recipeId}
+        recipeId={recipeId || 0}
         modalVisible={modalVisible}
         onClose={() => setModalVisible(false)}
       />

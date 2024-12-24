@@ -15,15 +15,39 @@ export async function getAllRecipes() {
 }
 
 export async function getRecipeById(id: number) {
-  if (!id)
-    return null;
+  if (!id) return null;
 
   try {
     const db = await SQLite.openDatabaseAsync(dbName);
 
-    const entity = await db.getFirstAsync(`SELECT * FROM Recipes WHERE id = ${id}`);
-    return entity;
+    // Fetch the main recipe details
+    const recipe = await db.getFirstAsync(`SELECT * FROM Recipes WHERE id = ${id}`);
+    if (!recipe) return null;
+
+    // Fetch the ingredients associated with the recipe
+    const ingredients = await db.getAllAsync(`
+      SELECT i.* 
+      FROM Ingredients i
+      JOIN Recipe_Ingredients ri ON i.id = ri.ingredientId
+      WHERE ri.recipeId = ${id}
+    `);
+
+    // Fetch the instructions associated with the recipe
+    const instructions = await db.getAllAsync(`
+      SELECT instr.*
+      FROM Instructions instr
+      JOIN Recipe_Instructions ri ON instr.id = ri.instructionId
+      WHERE ri.recipeId = ${id}
+      ORDER BY ri.stepOrder
+    `);
+
+    return {
+      ...recipe,
+      ingredients: ingredients,
+      instructions: instructions,
+    };
   } catch (error) {
+    console.error('Error fetching recipe:', error);
     return null;
   }
 }
