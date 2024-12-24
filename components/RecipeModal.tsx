@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { ThemedText } from './ThemedText';
 import TabSwitcher from './TabSwitcher';
+import NutritionalInfo from './NutritionalInfo';
 
 type RecipeModalProps = {
   modalVisible: boolean;
@@ -24,9 +25,9 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
       setCurrRecipe(foundRecipe as Recipe);
     }
 
-    if (recipeId) 
+    if (recipeId)
       findRecipeById();
-    
+
   }, [recipeId]);
 
   useEffect(() => {
@@ -131,6 +132,41 @@ export default function RecipeModal({ modalVisible, recipeId, onClose }: RecipeM
                 </ThemedText>
               </View>
             </View>
+            <View style={styles.nutritionalContainer}>
+              <View style={styles.nutritionalRow}>
+                <View style={styles.nutritionalItem}>
+                  <NutritionalInfo
+                    icon={<FontAwesome6 name="bread-slice" size={24} color="#0A2533" />}
+                    value={4}
+                    nutritionalValue="carbs"
+                  />
+                </View>
+                <View style={styles.nutritionalItem}>
+                  <NutritionalInfo
+                    icon={<FontAwesome6 name="egg" size={24} color="#0A2533" />}
+                    value={4}
+                    nutritionalValue="proteins"
+                  />
+                </View>
+              </View>
+              <View style={styles.nutritionalRow}>
+                <View style={styles.nutritionalItem}>
+                  <NutritionalInfo
+                    icon={<FontAwesome6 name="fire" size={24} color="#0A2533" />}
+                    value={4}
+                    nutritionalValue="Kcal"
+                  />
+                </View>
+                <View style={styles.nutritionalItem}>
+                  <NutritionalInfo
+                    icon={<FontAwesome6 name="pizza-slice" size={24} color="#0A2533" />}
+                    value={4}
+                    nutritionalValue="fats"
+                  />
+                </View>
+              </View>
+            </View>
+
             <TabSwitcher tab1='Ingredients' tab2='Instructions' onTab1Click={() => setCurrTab('Ingredients')} onTab2Click={() => setCurrTab('Instructions')} />
             {
               renderTabContent()
@@ -171,6 +207,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
+    gap: 10
   },
   titleContainer: {
     flexDirection: 'row',
@@ -190,13 +227,11 @@ const styles = StyleSheet.create({
   recipeTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
   },
   recipeDescription: {
     fontSize: 16,
     color: '#333',
     textAlign: 'justify',
-    marginBottom: 20,
   },
   closeButton: {
     position: 'absolute',
@@ -219,5 +254,19 @@ const styles = StyleSheet.create({
     marginTop: 8,
     flexDirection: 'row',
     justifyContent: 'space-between'
+  },
+  nutritionalContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  nutritionalRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginVertical: 10,
+  },
+  nutritionalItem: {
+    width: "65%", // Ensure consistent width for items
   },
 });
